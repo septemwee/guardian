@@ -1,75 +1,160 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import React from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { Svg, Path } from 'react-native-svg';
+import { BlurView } from 'expo-blur';
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-
-export default function HomeScreen() {
+export default function Home() {
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+    <View style={styles.container}>
+      {/* Header Card */}
+      <BlurView intensity={80} tint="light" style={styles.headerCard}>
+        <View style={styles.headerRow}>
+          <Text style={styles.headerTitle}>True Guardian</Text>
+        </View>
+      </BlurView>
+
+      {/* Menu Flex Wrap */}
+      <ScrollView
+        contentContainerStyle={styles.menuWrapper}
+        showsVerticalScrollIndicator={false}
+      >
+        <BlurView intensity={50} tint="light" style={styles.menuCard}>
+          <TouchableOpacity style={styles.menuContent} activeOpacity={0.7}>
+            <Svg width={32} height={32} viewBox="0 0 24 24" strokeWidth={1.5} stroke="red" fill="none" >
+              <Path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              <Path d="M9 12h.01M15 12h.01" />
+            </Svg>
+            <Text style={styles.menuText}>Chat</Text>
+          </TouchableOpacity>
+        </BlurView>
+
+        <BlurView intensity={50} tint="light" style={styles.menuCard}>
+          <TouchableOpacity style={styles.menuContent} activeOpacity={0.7}>
+            <Svg width={32} height={32} viewBox="0 0 24 24" strokeWidth={1.5} stroke="red" fill="none">
+              <Path d="M12 4.5v15m7.5-7.5h-15" />
+            </Svg>
+            <Text style={styles.menuText}>Browser</Text>
+          </TouchableOpacity>
+        </BlurView>
+
+        <BlurView intensity={50} tint="light" style={[styles.menuCard, { width: '100%' }]}>
+          <TouchableOpacity style={styles.menuContent} activeOpacity={0.7}>
+            <Svg width={32} height={32} viewBox="0 0 24 24" strokeWidth={1.5} stroke="red" fill="none">
+              <Path d="M12 3v18m9-9H3" />
+            </Svg>
+            <Text style={styles.menuText}>True Money</Text>
+          </TouchableOpacity>
+        </BlurView>
+      </ScrollView>
+
+      {/* Bottom Navigation */}
+      <BlurView intensity={70} tint="light" style={styles.bottomNav}>
+        <TouchableOpacity>
+          <Svg width={24} height={24} viewBox="0 0 24 24" stroke="red" fill="none" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+            <Path d="M3 9.5L12 3l9 6.5v11a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 20.5z" />
+            <Path d="M9 21V12h6v9" />
+          </Svg>
+        </TouchableOpacity>
+
+        <TouchableOpacity>
+          <Svg width={24} height={24} viewBox="0 0 24 24" stroke="black" fill="none" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+            <Path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2z" />
+          </Svg>
+        </TouchableOpacity>
+
+        <TouchableOpacity>
+          <Svg width={24} height={24} viewBox="0 0 24 24" stroke="black" fill="none" strokeWidth={1.5}>
+            <Path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </Svg>
+        </TouchableOpacity>
+
+        <TouchableOpacity>
+          <Svg width={24} height={24} viewBox="0 0 24 24" stroke="black" fill="none" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+            <Path d="M21 7v10a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V7" />
+            <Path d="M16 12h.01" />
+            <Path d="M3 7h18v-2a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v2z" />
+          </Svg>
+        </TouchableOpacity>
+      </BlurView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
+  container: {
+    flex: 1,
+    backgroundColor: '#F1F1F1',
     alignItems: 'center',
-    gap: 8,
+    padding: 16,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  headerCard: {
+    width: '90%',
+    height: 180,
+    borderRadius: 20,
+    padding: 16,
+    marginTop: 100,
+    overflow: 'hidden',  // สำคัญ! ต้องมีเพื่อให้ blur ทำงานถูกต้องบน Android
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 10,
+    backgroundColor: 'rgba(255, 255, 255, 0.25)', // โปร่งแสง
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
+  headerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  headerTitle: {
+    color: 'red',
+    fontWeight: 'bold',
+    fontSize: 18,
+  },
+  menuWrapper: {
+    marginTop: 24,
+    width: '90%',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+  },
+  menuCard: {
+    width: '47%',
+    height: 160,
+    borderRadius: 16,
+    padding: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 12,
+    marginHorizontal: 4,
+    overflow: 'hidden', // สำคัญสำหรับ blur
+    backgroundColor: 'rgba(255, 255, 255, 0.15)', // โปร่งแสง
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 8,
+  },
+  menuContent: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  menuText: {
+    color: 'red',
+    fontWeight: '600',
+    marginTop: 8,
+  },
+  bottomNav: {
     position: 'absolute',
+    bottom: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    width: '90%',
+    padding: 12,
+    borderRadius: 16,
+    overflow: 'hidden',
+    backgroundColor: 'rgba(255, 255, 255, 0.25)', // โปร่งแสง
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 10,
   },
 });
