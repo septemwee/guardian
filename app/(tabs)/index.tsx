@@ -48,7 +48,7 @@ export default function Home() {
       </ScrollView>
 
       {/* Bottom Navigation */}
-      <BlurView intensity={70} tint="light" style={styles.bottomNav}>
+      {/* <BlurView intensity={70} tint="light" style={styles.bottomNav}>
         <TouchableOpacity>
           <Svg width={24} height={24} viewBox="0 0 24 24" stroke="red" fill="none" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
             <Path d="M3 9.5L12 3l9 6.5v11a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 20.5z" />
@@ -75,7 +75,7 @@ export default function Home() {
             <Path d="M3 7h18v-2a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v2z" />
           </Svg>
         </TouchableOpacity>
-      </BlurView>
+      </BlurView> */}
     </View>
   );
 }
