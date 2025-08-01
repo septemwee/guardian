@@ -1,160 +1,157 @@
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
-import { Svg, Path } from 'react-native-svg';
-import { BlurView } from 'expo-blur';
+import { Platform, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-export default function Home() {
+const App = () => {
   return (
-    <View style={styles.container}>
-      {/* Header Card */}
-      <BlurView intensity={80} tint="light" style={styles.headerCard}>
-        <View style={styles.headerRow}>
-          <Text style={styles.headerTitle}>True Guardian</Text>
+    <SafeAreaView style={styles.container}>
+      {/* True Guardian Card */}
+      <View style={styles.guardianCardContainer}>
+        <LinearGradient
+          colors={['#8A0000', '#D60000']}
+          style={styles.guardianCardGradient}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+        >
+          <View style={styles.guardianCardContent}>
+            <Text style={styles.guardianText}>True Guardian</Text>
+            <View style={styles.shieldIconBackground}>
+              <MaterialCommunityIcons name="shield-lock-outline" size={60} color="#fff" />
+            </View>
+          </View>
+        </LinearGradient>
+      </View>
+
+      {/* Main Feature Buttons */}
+      <View style={styles.mainButtonsContainer}>
+        <View style={styles.buttonRow}>
+          <TouchableOpacity style={styles.featureButton}>
+            <Ionicons name="chatbox-ellipses-outline" size={40} color="#D60000" />
+            <Text style={styles.buttonText}>Chat</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.featureButton}>
+            <Ionicons name="globe-outline" size={40} color="#D60000" />
+            <Text style={styles.buttonText}>Browser</Text>
+          </TouchableOpacity>
         </View>
-      </BlurView>
 
-      {/* Menu Flex Wrap */}
-      <ScrollView
-        contentContainerStyle={styles.menuWrapper}
-        showsVerticalScrollIndicator={false}
-      >
-        <BlurView intensity={50} tint="light" style={styles.menuCard}>
-          <TouchableOpacity style={styles.menuContent} activeOpacity={0.7}>
-            <Svg width={32} height={32} viewBox="0 0 24 24" strokeWidth={1.5} stroke="red" fill="none" >
-              <Path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              <Path d="M9 12h.01M15 12h.01" />
-            </Svg>
-            <Text style={styles.menuText}>Chat</Text>
-          </TouchableOpacity>
-        </BlurView>
-
-        <BlurView intensity={50} tint="light" style={styles.menuCard}>
-          <TouchableOpacity style={styles.menuContent} activeOpacity={0.7}>
-            <Svg width={32} height={32} viewBox="0 0 24 24" strokeWidth={1.5} stroke="red" fill="none">
-              <Path d="M12 4.5v15m7.5-7.5h-15" />
-            </Svg>
-            <Text style={styles.menuText}>Browser</Text>
-          </TouchableOpacity>
-        </BlurView>
-
-        <BlurView intensity={50} tint="light" style={[styles.menuCard, { width: '100%' }]}>
-          <TouchableOpacity style={styles.menuContent} activeOpacity={0.7}>
-            <Svg width={32} height={32} viewBox="0 0 24 24" strokeWidth={1.5} stroke="red" fill="none">
-              <Path d="M12 3v18m9-9H3" />
-            </Svg>
-            <Text style={styles.menuText}>True Money</Text>
-          </TouchableOpacity>
-        </BlurView>
-      </ScrollView>
-
-      {/* Bottom Navigation */}
-      {/* <BlurView intensity={70} tint="light" style={styles.bottomNav}>
-        <TouchableOpacity>
-          <Svg width={24} height={24} viewBox="0 0 24 24" stroke="red" fill="none" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-            <Path d="M3 9.5L12 3l9 6.5v11a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 20.5z" />
-            <Path d="M9 21V12h6v9" />
-          </Svg>
+        <TouchableOpacity style={styles.trueMoneyButton}>
+          <View style={styles.trueMoneyContent}>
+            <MaterialCommunityIcons name="wallet-outline" size={40} color="#D60000" />
+            <Text style={styles.buttonText}>True Money</Text>
+          </View>
         </TouchableOpacity>
-
-        <TouchableOpacity>
-          <Svg width={24} height={24} viewBox="0 0 24 24" stroke="black" fill="none" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-            <Path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2z" />
-          </Svg>
-        </TouchableOpacity>
-
-        <TouchableOpacity>
-          <Svg width={24} height={24} viewBox="0 0 24 24" stroke="black" fill="none" strokeWidth={1.5}>
-            <Path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </Svg>
-        </TouchableOpacity>
-
-        <TouchableOpacity>
-          <Svg width={24} height={24} viewBox="0 0 24 24" stroke="black" fill="none" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-            <Path d="M21 7v10a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V7" />
-            <Path d="M16 12h.01" />
-            <Path d="M3 7h18v-2a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v2z" />
-          </Svg>
-        </TouchableOpacity>
-      </BlurView> */}
-    </View>
+      </View>
+    </SafeAreaView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F1F1F1',
-    alignItems: 'center',
-    padding: 16,
+    backgroundColor: '#f0f0f0',
+    paddingTop: Platform.OS === 'android' ? 25 : 0, // บรรทัดนี้ใช้ Platform
   },
-  headerCard: {
-    width: '90%',
-    height: 180,
+  header: {
+    padding: 15,
+  },
+  headerText: {
+    fontSize: 18,
+    color: '#888',
+  },
+  guardianCardContainer: {
+    paddingHorizontal: 20,
+    marginTop: 60,
+    marginBottom: 20,
+  },
+  guardianCardGradient: {
     borderRadius: 20,
-    padding: 16,
-    marginTop: 100,
-    overflow: 'hidden',  // สำคัญ! ต้องมีเพื่อให้ blur ทำงานถูกต้องบน Android
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    elevation: 10,
-    backgroundColor: 'rgba(255, 255, 255, 0.25)', // โปร่งแสง
+    padding: 20,
   },
-  headerRow: {
+  guardianCardContent: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-  },
-  headerTitle: {
-    color: 'red',
-    fontWeight: 'bold',
-    fontSize: 18,
-  },
-  menuWrapper: {
-    marginTop: 24,
-    width: '90%',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
-  },
-  menuCard: {
-    width: '47%',
-    height: 160,
-    borderRadius: 16,
-    padding: 16,
-    justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 12,
-    marginHorizontal: 4,
-    overflow: 'hidden', // สำคัญสำหรับ blur
-    backgroundColor: 'rgba(255, 255, 255, 0.15)', // โปร่งแสง
+  },
+  guardianText: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#fff',
+  },
+  shieldIconBackground: {
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderRadius: 50,
+    padding: 5,
+  },
+  mainButtonsContainer: {
+    flex: 1,
+    paddingHorizontal: 20,
+  },
+  buttonRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 15,
+  },
+  featureButton: {
+    flex: 1,
+    backgroundColor: '#fff',
+    borderRadius: 20,
+    padding: 20,
+    alignItems: 'center',
+    marginHorizontal: 5,
     shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 8,
+    elevation: 3,
   },
-  menuContent: {
-    justifyContent: 'center',
+  trueMoneyButton: {
+    backgroundColor: '#fff',
+    borderRadius: 20,
+    padding: 20,
     alignItems: 'center',
+    marginBottom: 15,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
-  menuText: {
-    color: 'red',
-    fontWeight: '600',
-    marginTop: 8,
+  trueMoneyContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonText: {
+    marginTop: 5,
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  bottomNavContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    padding: 15,
   },
   bottomNav: {
-    position: 'absolute',
-    bottom: 20,
+    backgroundColor: '#fff',
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
-    width: '90%',
-    padding: 12,
-    borderRadius: 16,
-    overflow: 'hidden',
-    backgroundColor: 'rgba(255, 255, 255, 0.25)', // โปร่งแสง
+    borderRadius: 30,
+    paddingVertical: 10,
     shadowColor: '#000',
+    shadowOffset: { width: 0, height: -2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 10,
+    elevation: 5,
+  },
+  navButton: {
+    padding: 10,
   },
 });
+
+export default App;

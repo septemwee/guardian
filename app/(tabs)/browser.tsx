@@ -12,7 +12,7 @@ export default function Browser() {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 50,
+    marginTop: 20,
     flex: 1,
   },
 });
