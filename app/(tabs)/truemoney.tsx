@@ -80,8 +80,8 @@ const TrueMoneyPage = () => {
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalContainer}>
-            <Text style={styles.modalTitle}>ยืนยัน</Text>
-            <Text style={styles.modalMessage}>คุณต้องการย้อนกลับหรือไม่?</Text>
+            <Text style={styles.modalTitle}>การโอนเงินนี้ดูผิดปกติ</Text>
+            <Text style={styles.modalMessage}>คุณแน่ใจว่าจะทำรายการนี้หรือไม่?</Text>
 
             <View style={styles.modalButtons}>
               <Pressable
@@ -99,7 +99,7 @@ const TrueMoneyPage = () => {
                   console.log('User confirmed back');
                 }}
               >
-                <Text style={styles.confirmText}>ตกลง</Text>
+                <Text style={styles.confirmText}>ดำเนินการต่อ</Text>
               </Pressable>
             </View>
           </View>
