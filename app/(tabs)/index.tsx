@@ -1,7 +1,8 @@
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
 import { Platform, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
+import Carousel from 'react-native-reanimated-carousel';
 
 const App = () => {
   return (
@@ -51,7 +52,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f0f0f0',
-    paddingTop: Platform.OS === 'android' ? 25 : 0, // บรรทัดนี้ใช้ Platform
+    paddingTop: Platform.OS === 'android' ? 25 : 0,
   },
   header: {
     padding: 15,
@@ -73,16 +74,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    minHeight: 120,
   },
   guardianText: {
     fontSize: 22,
     fontWeight: 'bold',
     color: '#fff',
+    paddingLeft: 10,
   },
   shieldIconBackground: {
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
     borderRadius: 50,
-    padding: 5,
+    padding: 20,
   },
   mainButtonsContainer: {
     flex: 1,
@@ -105,6 +108,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
+    minHeight: 120, 
+    justifyContent: 'center',
   },
   trueMoneyButton: {
     backgroundColor: '#fff',
@@ -117,9 +122,11 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
+    minHeight: 120,
+    justifyContent: 'center',
   },
   trueMoneyContent: {
-    flexDirection: 'row',
+    flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
   },

@@ -85,43 +85,12 @@ const styles = StyleSheet.create({
     paddingTop: Platform.OS === 'android' ? 25 : 0,
     marginBottom: 15,
   },
-  header: {
-    padding: 15,
-  },
-  headerText: {
-    fontSize: 18,
-    color: '#888',
-  },
-  guardianCardContainer: {
-    paddingHorizontal: 20,
-    marginTop: 10,
-    marginBottom: 20,
-  },
-  guardianCardGradient: {
-    borderRadius: 20,
-    padding: 20,
-  },
-  guardianCardContent: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  guardianText: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#fff',
-  },
-  shieldIconBackground: {
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    borderRadius: 50,
-    padding: 5,
-  },
   bottomNavContainer: {
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
-    padding: 15,
+    padding: 20,
   },
   bottomNav: {
     backgroundColor: '#fff',
@@ -129,7 +98,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     alignItems: 'center',
     borderRadius: 60,
-    paddingVertical: 10,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: -2 },
     shadowOpacity: 0.1,
