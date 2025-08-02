@@ -1,32 +1,69 @@
-import BarChatHeader from '@/components/barchat'; // อ้างอิงจากไฟล์ที่เราสร้างก่อนหน้า
-import ChatboxRight from '@/components/ChatboxRight';
-import NavChat from '@/components/navchat'; // อ้างอิงจากไฟล์ที่เราสร้างก่อนหน้า
-import React from 'react';
-import { Platform, SafeAreaView, StatusBar, StyleSheet, View } from 'react-native';
+import BarChatHeader from '@/components/barchat';
+import NavChat from '@/components/navchat';
+import React, { useState } from 'react';
+import { FlatList, Platform, SafeAreaView, StatusBar, StyleSheet, Text, View } from 'react-native';
+// สร้าง Interface สำหรับกำหนดชนิดของข้อมูลในแต่ละข้อความ
+interface Message {
+  id: string;
+  text: string;
+  sender: 'user' | 'other';
+}
 
 const Chatpage = () => {
+  // สถานะสำหรับเก็บข้อความที่ผู้ใช้กำลังพิมพ์
+  const [messageText, setMessageText] = useState('');
+  
+  // สถานะสำหรับเก็บข้อความที่ถูกส่งไปแล้วทั้งหมด
+  // โดยกำหนดชนิดเป็น Array ของ Message Interface ที่สร้างไว้
+  const [messages, setMessages] = useState<Message[]>([]);
+
+  // สถานะใหม่สำหรับเก็บว่าผู้ส่งคนปัจจุบันคือใคร
+  const [currentSender, setCurrentSender] = useState<'user' | 'other'>('user');
+
+  // ฟังก์ชันสำหรับส่งข้อความ
+  const handleSendMessage = () => {
+    if (messageText.trim()) {
+      const newMessage: Message = {
+        id: Date.now().toString(),
+        text: messageText,
+        sender: currentSender, // ใช้สถานะ currentSender ที่ถูกสลับแล้ว
+      };
+      
+      setMessages(prevMessages => [newMessage, ...prevMessages]);
+      setMessageText('');
+    }
+  };
+
+  // ฟังก์ชันใหม่สำหรับสลับผู้ส่ง
+  const handleToggleSender = () => {
+    setCurrentSender(prevSender => (prevSender === 'user' ? 'other' : 'user'));
+  };
+
+  const renderMessage = ({ item }: { item: Message }) => (
+    <View style={item.sender === 'user' ? styles.userMessageContainer : styles.otherMessageContainer}>
+      <Text style={styles.messageText}>{item.text}</Text>
+    </View>
+  );
+
   return (
-    // SafeAreaView ช่วยให้เนื้อหาไม่ทับส่วนที่เป็น notch หรือ status bar บน iOS
-    // และ StatusBar.currentHeight สำหรับ Android เพื่อหลีกเลี่ยงการทับ status bar
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
-        {/* Header Component */}
         <BarChatHeader />
-
-        {/* ส่วนเนื้อหาหลักของหน้าแชท */}
-        {/* คุณสามารถเพิ่มคอมโพเนนต์สำหรับแสดงข้อความแชทที่นี่ */}
-        <ChatboxRight/>
-        <View style={styles.chatContent}>
-          {/* ตัวอย่าง: ใส่ ScrollView หรือ FlatList สำหรับข้อความแชท */}
-          {/* <ScrollView>
-            <Text>ข้อความแชท 1</Text>
-            <Text>ข้อความแชท 2</Text>
-            ...
-          </ScrollView> */}
-        </View>
-
-        {/* Bottom Navigation / Input Bar Component */}
-        <NavChat />
+        <FlatList
+          data={messages}
+          renderItem={renderMessage}
+          keyExtractor={item => item.id}
+          contentContainerStyle={styles.chatContent}
+          inverted={true}
+        />
+        {/* ส่ง props ที่จำเป็นไปให้ NavChat และเพิ่ม onToggleSender, currentSender */}
+        <NavChat
+          messageText={messageText}
+          setMessageText={setMessageText}
+          onSend={handleSendMessage}
+          onToggleSender={handleToggleSender}
+          currentSender={currentSender}
+        />
       </View>
     </SafeAreaView>
   );
@@ -34,23 +71,38 @@ const Chatpage = () => {
 
 const styles = StyleSheet.create({
   safeArea: {
-    flex: 1, // ทำให้ SafeAreaView กินพื้นที่เต็มจอ
-    backgroundColor: '#F5F5F5', // สีพื้นหลังหลักของหน้า
-    // เพิ่ม padding top สำหรับ Android เพื่อหลีกเลี่ยง status bar
+    flex: 1,
+    backgroundColor: '#F5F5F5',
     paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
   container: {
-    flex: 1, // ทำให้ View นี้กินพื้นที่ที่เหลือทั้งหมดใน SafeAreaView
-    backgroundColor: '#F5F5F5', // กำหนดสีพื้นหลัง #F5F5F5 เทียบเท่า bg-[#F5F5F5]
-    // min-h-screen ใน React Native มักจะทำโดยการให้ flex: 1 กับ container หลัก
+    flex: 1,
+    backgroundColor: '#F5F5F5',
   },
   chatContent: {
-    flex: 1, // ทำให้ส่วนเนื้อหาแชทกินพื้นที่ตรงกลางที่เหลือ
-    // padding เพื่อไม่ให้เนื้อหาทับ BarChatHeader และ NavChat
-    paddingTop: 86, // ความสูงของ BarChatHeader
-    paddingBottom: 86, // ความสูงของ NavChat
-    // หากมีเนื้อหาแชทเยอะ ควรใช้ ScrollView หรือ FlatList ที่นี่
-  }
+    paddingTop: 86,
+    paddingBottom: 86,
+    justifyContent: 'flex-end',
+  },
+  userMessageContainer: {
+    backgroundColor: '#DCF8C6',
+    alignSelf: 'flex-end',
+    margin: 8,
+    padding: 12,
+    borderRadius: 15,
+    maxWidth: '80%',
+  },
+  otherMessageContainer: {
+    backgroundColor: 'white',
+    alignSelf: 'flex-start',
+    margin: 8,
+    padding: 12,
+    borderRadius: 15,
+    maxWidth: '80%',
+  },
+  messageText: {
+    fontSize: 16,
+  },
 });
 
 export default Chatpage;

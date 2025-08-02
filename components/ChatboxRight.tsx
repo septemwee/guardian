@@ -7,7 +7,7 @@ const ChatboxRight = () => {
   return (
     <View style={styles.rightbox}>
         <Text>
-            มีแฟนยังน้องเพื่อนพี่ชอบ
+          
         </Text>
 
     </View>
