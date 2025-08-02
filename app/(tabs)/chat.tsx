@@ -25,7 +25,7 @@ const Chatpage = () => {
       const newMessage: Message = {
         id: Date.now().toString(), // ใช้ timestamp เป็น ID
         text: messageText,
-        sender: 'user', // กำหนดผู้ส่ง
+        sender: currentSender, // กำหนดผู้ส่ง
       };
       
       // เพิ่มข้อความใหม่เข้าไปใน Array ของข้อความเดิม
@@ -42,6 +42,10 @@ const Chatpage = () => {
       <Text style={styles.messageText}>{item.text}</Text>
     </View>
   );
+    const [currentSender, setCurrentSender] = useState<'user' | 'other'>('user');
+  const handleToggleSender = () => {
+    setCurrentSender(prevSender => (prevSender === 'user' ? 'other' : 'user'));
+  };
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -65,6 +69,8 @@ const Chatpage = () => {
           messageText={messageText}
           setMessageText={setMessageText}
           onSend={handleSendMessage}
+          onToggleSender={handleToggleSender}
+          currentSender={currentSender}
         />
       </View>
     </SafeAreaView>

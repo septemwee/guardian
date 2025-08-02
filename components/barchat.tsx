@@ -7,8 +7,8 @@ import {
   View,
 } from "react-native";
 import Svg, { Path } from "react-native-svg"; // สำหรับการแสดงผล SVG icon
+const { width, height } = Dimensions.get('window');
 
-const { width } = Dimensions.get("window"); // รับความกว้างของหน้าจอ
 
 const BarChatHeader = () => {
   return (
@@ -38,17 +38,15 @@ const BarChatHeader = () => {
 // การกำหนดสไตล์ด้วย StyleSheet.create
 const styles = StyleSheet.create({
   headerContainer: {
-    backgroundColor: "white",
-    position: "absolute", // คล้ายกับ 'fixed' ในเว็บ
-    top: 0,
-    left: 0,
-    width: "100%", // เทียบเท่ากับ w-full
-    height: 86, // กำหนดความสูงเป็นหน่วย pixel
-    borderBottomWidth: 1, // กำหนดเส้นขอบด้านล่าง
-    borderBottomColor: "#D4D4D4",
-    flexDirection: "row", // จัดเรียงองค์ประกอบในแนวนอน
-    alignItems: "center", // จัดองค์ประกอบให้อยู่ตรงกลางแนวตั้ง
-    paddingHorizontal: width * 0.04, // padding ซ้าย-ขวา แบบ Responsive (เช่น 4% ของความกว้างหน้าจอ)
+    justifyContent: 'flex-end',
+    backgroundColor: 'white',
+    width: '100%',
+    height: height * 0.1,
+    borderTopWidth: 1,
+    borderTopColor: '#D4D4D4',
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: width * 0.04,
   },
   backButton: {
     marginLeft: 16, // เทียบเท่า ml-4 (1 หน่วยของ Tailwind มักจะประมาณ 4px ใน React Native)
