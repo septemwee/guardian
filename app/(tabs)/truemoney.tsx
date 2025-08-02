@@ -11,12 +11,32 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
+
+export type RootStackParamList = {
+  truemoneyWait: undefined;
+};
+
+
+type TrueMoneyPageNavigationProp = NativeStackNavigationProp<RootStackParamList, 'truemoneyWait'>;
 
 const TrueMoneyPage = () => {
+  // Use NativeStackNavigationProp for type-safe navigation
+  const navigation = useNavigation<TrueMoneyPageNavigationProp>();
   const [modalVisible, setModalVisible] = useState(false);
 
   const openModal = () => setModalVisible(true);
   const closeModal = () => setModalVisible(false);
+
+  // ฟังก์ชันสำหรับจำลองการนำทาง
+  const handleConfirmNavigation = () => {
+    closeModal();
+    // navigate to the 'truemoneyWait' screen
+    navigation.navigate('truemoneyWait');
+    console.log('User confirmed and navigating to truemoneyWait');
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -93,11 +113,7 @@ const TrueMoneyPage = () => {
 
               <Pressable
                 style={[styles.modalButton, styles.confirmButtonModal]}
-                onPress={() => {
-                  closeModal();
-                  // ใส่ logic เช่น navigation.goBack() หรืออื่น ๆ
-                  console.log('User confirmed back');
-                }}
+                onPress={handleConfirmNavigation}
               >
                 <Text style={styles.confirmText}>ดำเนินการต่อ</Text>
               </Pressable>

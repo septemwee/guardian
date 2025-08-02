@@ -36,6 +36,18 @@ const Layout = () => {
               </View>
             </TouchableOpacity>
           </Link>
+
+          <Link href="/browser" asChild>
+            <TouchableOpacity style={styles.navButton}>
+              <View style={[styles.navIconContainer, getIconBackground('/browser')]}>
+                <Ionicons
+                  name="search-outline"
+                  size={28}
+                  color={getIconColor('/browser')}
+                />
+              </View>
+            </TouchableOpacity>
+          </Link>
           
           <Link href="/chat" asChild>
             <TouchableOpacity style={styles.navButton}>
@@ -49,18 +61,6 @@ const Layout = () => {
             </TouchableOpacity>
           </Link>
           
-          <Link href="/browser" asChild>
-            <TouchableOpacity style={styles.navButton}>
-              <View style={[styles.navIconContainer, getIconBackground('/browser')]}>
-                <Ionicons
-                  name="search-outline"
-                  size={28}
-                  color={getIconColor('/browser')}
-                />
-              </View>
-            </TouchableOpacity>
-          </Link>
-          
           <Link href="/truemoney" asChild>
             <TouchableOpacity style={styles.navButton}>
               <View style={[styles.navIconContainer, getIconBackground('/truemoney')]}>
@@ -68,6 +68,18 @@ const Layout = () => {
                   name="wallet-outline"
                   size={28}
                   color={getIconColor('/truemoney')}
+                />
+              </View>
+            </TouchableOpacity>
+          </Link>
+
+          <Link href="/display" asChild>
+            <TouchableOpacity style={styles.navButton}>
+              <View style={[styles.navIconContainer, getIconBackground('/display')]}>
+                <Ionicons
+                  name="wallet-outline"
+                  size={28}
+                  color={getIconColor('/display')}
                 />
               </View>
             </TouchableOpacity>
