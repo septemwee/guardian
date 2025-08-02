@@ -17,28 +17,26 @@ const Chatpage = () => {
   // โดยกำหนดชนิดเป็น Array ของ Message Interface ที่สร้างไว้
   const [messages, setMessages] = useState<Message[]>([]);
 
-  // สถานะใหม่สำหรับเก็บว่าผู้ส่งคนปัจจุบันคือใคร
-  const [currentSender, setCurrentSender] = useState<'user' | 'other'>('user');
-
   // ฟังก์ชันสำหรับส่งข้อความ
   const handleSendMessage = () => {
+    // เช็คว่ามีข้อความหรือไม่
     if (messageText.trim()) {
+      // สร้างออบเจ็กต์ข้อความใหม่
       const newMessage: Message = {
-        id: Date.now().toString(),
+        id: Date.now().toString(), // ใช้ timestamp เป็น ID
         text: messageText,
-        sender: currentSender, // ใช้สถานะ currentSender ที่ถูกสลับแล้ว
+        sender: 'user', // กำหนดผู้ส่ง
       };
       
+      // เพิ่มข้อความใหม่เข้าไปใน Array ของข้อความเดิม
       setMessages(prevMessages => [newMessage, ...prevMessages]);
+      // ล้างช่องกรอกข้อความ
       setMessageText('');
     }
   };
 
-  // ฟังก์ชันใหม่สำหรับสลับผู้ส่ง
-  const handleToggleSender = () => {
-    setCurrentSender(prevSender => (prevSender === 'user' ? 'other' : 'user'));
-  };
-
+  // Render function สำหรับแสดงแต่ละข้อความ
+  // กำหนดชนิดของ item ให้ตรงกับ Message Interface
   const renderMessage = ({ item }: { item: Message }) => (
     <View style={item.sender === 'user' ? styles.userMessageContainer : styles.otherMessageContainer}>
       <Text style={styles.messageText}>{item.text}</Text>
@@ -48,21 +46,25 @@ const Chatpage = () => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
+        {/* Header Component */}
         <BarChatHeader />
+
+        {/* ส่วนแสดงข้อความแชท */}
+        {/* ใช้ FlatList เพื่อประสิทธิภาพที่ดีกว่าในการแสดงรายการข้อความจำนวนมาก */}
         <FlatList
           data={messages}
           renderItem={renderMessage}
           keyExtractor={item => item.id}
           contentContainerStyle={styles.chatContent}
-          inverted={true}
+          inverted={true} // เพื่อให้ข้อความใหม่แสดงอยู่ด้านล่างสุด
         />
-        {/* ส่ง props ที่จำเป็นไปให้ NavChat และเพิ่ม onToggleSender, currentSender */}
+
+        {/* Bottom Navigation / Input Bar Component */}
+        {/* ส่ง props ที่จำเป็นไปให้ NavChat */}
         <NavChat
           messageText={messageText}
           setMessageText={setMessageText}
           onSend={handleSendMessage}
-          onToggleSender={handleToggleSender}
-          currentSender={currentSender}
         />
       </View>
     </SafeAreaView>
@@ -80,9 +82,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5F5F5',
   },
   chatContent: {
-    paddingTop: 86,
-    paddingBottom: 86,
-    justifyContent: 'flex-end',
+    // กำหนด padding ให้ไม่ทับ header และ bottom bar
+    paddingTop: 20, // ความสูงของ BarChatHeader
+    paddingBottom: 20, // ความสูงของ NavChat
+    justifyContent: 'flex-end', // จัดให้ข้อความอยู่ด้านล่าง
   },
   userMessageContainer: {
     backgroundColor: '#DCF8C6',
