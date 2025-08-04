@@ -159,6 +159,10 @@ const styles = StyleSheet.create({
   navButton: {
     padding: 10,
   },
+  chatContent: {
+    flex: 1, // ทำให้ส่วนนี้ขยายเต็มพื้นที่ที่เหลือ
+    paddingHorizontal: 16, // เพิ่ม padding ซ้าย-ขวา เพื่อให้ดูดีขึ้น
+  }
 });
 
 export default App;
