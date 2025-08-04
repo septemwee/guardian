@@ -60,8 +60,20 @@ const Layout = () => {
               </View>
             </TouchableOpacity>
           </Link>
+
+          <Link href="/call" asChild>
+            <TouchableOpacity style={styles.navButton}>
+              <View style={[styles.navIconContainer, getIconBackground('/call')]}>
+                <Ionicons
+                  name="call-outline"
+                  size={28}
+                  color={getIconColor('/call')}
+                />
+              </View>
+            </TouchableOpacity>
+          </Link>
           
-          <Link href="/truemoney" asChild>
+          {/* <Link href="/truemoney" asChild>
             <TouchableOpacity style={styles.navButton}>
               <View style={[styles.navIconContainer, getIconBackground('/truemoney')]}>
                 <Ionicons
@@ -71,9 +83,9 @@ const Layout = () => {
                 />
               </View>
             </TouchableOpacity>
-          </Link>
+          </Link> */}
 
-          <Link href="/display" asChild>
+          {/* <Link href="/display" asChild>
             <TouchableOpacity style={styles.navButton}>
               <View style={[styles.navIconContainer, getIconBackground('/display')]}>
                 <Ionicons
@@ -83,7 +95,7 @@ const Layout = () => {
                 />
               </View>
             </TouchableOpacity>
-          </Link>
+          </Link> */}
         </View>
       </View>
     </SafeAreaView>

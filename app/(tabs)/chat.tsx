@@ -1,7 +1,17 @@
 import BarChatHeader from '@/components/barchat';
 import NavChat from '@/components/navchat';
 import React, { useState } from 'react';
-import { FlatList, Platform, SafeAreaView, StatusBar, StyleSheet, Text, View } from 'react-native';
+import {
+  FlatList,
+  Platform,
+  SafeAreaView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  View,
+  KeyboardAvoidingView, // Import KeyboardAvoidingView
+} from 'react-native';
+
 // สร้าง Interface สำหรับกำหนดชนิดของข้อมูลในแต่ละข้อความ
 interface Message {
   id: string;
@@ -12,10 +22,13 @@ interface Message {
 const Chatpage = () => {
   // สถานะสำหรับเก็บข้อความที่ผู้ใช้กำลังพิมพ์
   const [messageText, setMessageText] = useState('');
-  
+
   // สถานะสำหรับเก็บข้อความที่ถูกส่งไปแล้วทั้งหมด
   // โดยกำหนดชนิดเป็น Array ของ Message Interface ที่สร้างไว้
   const [messages, setMessages] = useState<Message[]>([]);
+
+  // กำหนดผู้ส่งปัจจุบัน (user หรือ other)
+  const [currentSender, setCurrentSender] = useState<'user' | 'other'>('user');
 
   // ฟังก์ชันสำหรับส่งข้อความ
   const handleSendMessage = () => {
@@ -27,7 +40,7 @@ const Chatpage = () => {
         text: messageText,
         sender: currentSender, // กำหนดผู้ส่ง
       };
-      
+
       // เพิ่มข้อความใหม่เข้าไปใน Array ของข้อความเดิม
       setMessages(prevMessages => [newMessage, ...prevMessages]);
       // ล้างช่องกรอกข้อความ
@@ -42,37 +55,43 @@ const Chatpage = () => {
       <Text style={styles.messageText}>{item.text}</Text>
     </View>
   );
-    const [currentSender, setCurrentSender] = useState<'user' | 'other'>('user');
+
+  // ฟังก์ชันสำหรับสลับผู้ส่ง
   const handleToggleSender = () => {
     setCurrentSender(prevSender => (prevSender === 'user' ? 'other' : 'user'));
   };
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
-        {/* Header Component */}
-        <BarChatHeader />
+      {/* ใช้ KeyboardAvoidingView ครอบ View หลัก */}
+      <KeyboardAvoidingView
+        style={styles.keyboardAvoidingView}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0} // ปรับ offset ถ้าจำเป็น
+      >
+        <View style={styles.container}>
+          {/* Header Component */}
+          <BarChatHeader />
 
-        {/* ส่วนแสดงข้อความแชท */}
-        {/* ใช้ FlatList เพื่อประสิทธิภาพที่ดีกว่าในการแสดงรายการข้อความจำนวนมาก */}
-        <FlatList
-          data={messages}
-          renderItem={renderMessage}
-          keyExtractor={item => item.id}
-          contentContainerStyle={styles.chatContent}
-          inverted={true} // เพื่อให้ข้อความใหม่แสดงอยู่ด้านล่างสุด
-        />
+          {/* ส่วนแสดงข้อความแชท */}
+          <FlatList
+            data={messages}
+            renderItem={renderMessage}
+            keyExtractor={item => item.id}
+            contentContainerStyle={styles.chatContent}
+            inverted={true}
+          />
 
-        {/* Bottom Navigation / Input Bar Component */}
-        {/* ส่ง props ที่จำเป็นไปให้ NavChat */}
-        <NavChat
-          messageText={messageText}
-          setMessageText={setMessageText}
-          onSend={handleSendMessage}
-          onToggleSender={handleToggleSender}
-          currentSender={currentSender}
-        />
-      </View>
+          {/* Bottom Navigation / Input Bar Component */}
+          <NavChat
+            messageText={messageText}
+            setMessageText={setMessageText}
+            onSend={handleSendMessage}
+            onToggleSender={handleToggleSender}
+            currentSender={currentSender}
+          />
+        </View>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };
@@ -83,15 +102,17 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5F5F5',
     paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
+  keyboardAvoidingView: {
+    flex: 1, // ทำให้ KeyboardAvoidingView ครอบคลุมพื้นที่ทั้งหมด
+  },
   container: {
     flex: 1,
     backgroundColor: '#F5F5F5',
   },
   chatContent: {
-    // กำหนด padding ให้ไม่ทับ header และ bottom bar
-    paddingTop: 20, // ความสูงของ BarChatHeader
-    paddingBottom: 20, // ความสูงของ NavChat
-    justifyContent: 'flex-end', // จัดให้ข้อความอยู่ด้านล่าง
+    paddingTop: 20,
+    paddingBottom: 20,
+    justifyContent: 'flex-end',
   },
   userMessageContainer: {
     backgroundColor: '#DCF8C6',
