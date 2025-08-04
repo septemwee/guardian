@@ -1,14 +1,15 @@
+// screens/PermissionBoxExample.js OR app/index.js if using Expo Router
 import React from 'react';
 import {
-  Platform, // <-- Added Platform here
+  Platform,
   SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
-  Alert, // Use Alert for demonstrating actions in a development environment
+  Alert,
   View,
 } from 'react-native';
-import PermissionBox from '@/components/ui/permissionBox';// Assuming PermissionBox.js is in the same directory
+import PermissionBox from '@/components/ui/permissionBox'; // Adjust this path based on your project structure
 
 const PermissionBoxExample = () => {
   // Mock data for the transaction
@@ -21,12 +22,16 @@ const PermissionBoxExample = () => {
   };
 
   const handleReject = () => {
-    Alert.alert('Transaction Rejected', 'You have rejected the transaction.');
+    Alert.alert('Transaction Rejected', 'คุณได้ปฏิเสธรายการนี้', [{
+      text: 'ตกลง'
+    }]);
     // In a real app, this would trigger an API call to reject the transaction
   };
 
   const handleAccept = () => {
-    Alert.alert('Transaction Accepted', 'You have accepted the transaction.');
+    Alert.alert('Transaction Accepted', 'คุณได้อนุมัติรายการนี้', [{
+      text: 'ตกลง'
+    }]);
     // In a real app, this would trigger an API call to accept the transaction
   };
 
@@ -57,7 +62,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f5f5f5',
-    paddingTop: Platform.OS === 'android' ? 25 : 0,
+    paddingTop: Platform.OS === 'android' ? 25 : 0, // Adjust for Android status bar
   },
   scrollViewContent: {
     padding: 15,
@@ -67,8 +72,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   headerText: {
-    fontSize: 20,
+    fontSize: 24, // Slightly larger for prominence
     fontWeight: 'bold',
+    color: '#333',
   },
   cardWrapper: {
     marginTop: 20,
