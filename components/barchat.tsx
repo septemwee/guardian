@@ -1,3 +1,4 @@
+import { Link } from 'expo-router';
 import React from "react";
 import {
   Dimensions, // ใช้สำหรับข้อความทั้งหมด
@@ -9,11 +10,11 @@ import {
 import Svg, { Path } from "react-native-svg"; // สำหรับการแสดงผล SVG icon
 const { width, height } = Dimensions.get('window');
 
-
 const BarChatHeader = () => {
   return (
     <View style={styles.headerContainer}>
       {/* ปุ่มย้อนกลับ */}
+      <Link href="/" asChild>
       <TouchableOpacity style={styles.backButton}>
         {/* SVG Icon: ต้องใช้ไลบรารี 'react-native-svg' */}
         <Svg width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -22,11 +23,11 @@ const BarChatHeader = () => {
             fill="#8D8B8B"
           />
         </Svg>
-      </TouchableOpacity>
+      </TouchableOpacity></Link>
 
       {/* ส่วนแสดงชื่อแชท */}
       <View style={styles.titleContainer}>
-        <Text style={styles.titleText}>CHAT 1</Text>
+        <Text style={styles.titleText}>GUARDIAN AI</Text>
       </View>
 
       {/* Placeholder สำหรับพื้นที่ว่างทางขวา (เทียบเท่า w-[24px] ml-4) */}
