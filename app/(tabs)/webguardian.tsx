@@ -1,7 +1,7 @@
-import React, { useState, useRef } from 'react';
-import { StyleSheet, View, Text, TextInput, TouchableOpacity, Modal, ActivityIndicator } from 'react-native';
-import WebView, { WebViewNavigation, WebViewMessageEvent } from 'react-native-webview';
 import { Ionicons } from '@expo/vector-icons';
+import React, { useRef, useState } from 'react';
+import { ActivityIndicator, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import WebView, { WebViewMessageEvent, WebViewNavigation } from 'react-native-webview';
 
 // รายการเว็บไซต์ที่น่าสงสัยและคำต้องสงสัย
 const suspiciousWebsites = ['malicious.com', 'phishing-site.net', 'suspicious-domain.org'];
@@ -19,6 +19,26 @@ const BrowserMockup = () => {
   const [modalMessage, setModalMessage] = useState({ title: '', text: '' });
   const [canGoBack, setCanGoBack] = useState(false);
 
+
+  const checkUrlStructure = (url: string) => {
+  try {
+    const u = new URL(url);
+    // ตัวอย่างเช็ค subdomain แปลกๆ (มีเลขเยอะๆ หรือ symbol แปลก)
+    const subdomains = u.hostname.split('.');
+    const subdomainParts = subdomains.slice(0, -2);
+    if (subdomainParts.some(d => /\d/.test(d) || /[^a-z0-9-]/i.test(d))) {
+      return { danger: true, reason: 'subdomain suspicious' };
+    }
+    // homograph / punycode check (ดูว่าชื่อโดเมนมี unicode หรือเปล่า)
+    if (u.hostname.includes('xn--')) {
+      return { danger: true, reason: 'punycode (homograph) detected' };
+    }
+    return { danger: false };
+  } catch {
+    return { danger: true, reason: 'invalid url' };
+  }
+};
+
   // ฟังก์ชันสำหรับจัดการเมื่อผู้ใช้กดปุ่ม 'Go'
   const handleGo = (inputUrl: string = url) => {
     // ป้องกันการโหลด URL ว่าง
@@ -35,9 +55,34 @@ const BrowserMockup = () => {
     } else {
       formattedUrl = `https://${inputUrl}`;
     }
-
+    
     const isSuspiciousWebsite = suspiciousWebsites.some(suspiciousUrl => formattedUrl.includes(suspiciousUrl));
     const isHttp = formattedUrl.startsWith('http://') && !formattedUrl.startsWith('https://');
+    
+  const urlCheck = checkUrlStructure(formattedUrl);
+if (urlCheck.danger) {
+  let errorText = 'เว็บไซต์นี้มีความผิดปกติที่อาจเสี่ยงต่อความปลอดภัย';
+
+  switch (urlCheck.reason) {
+    case 'subdomain suspicious':
+      errorText = `ชื่อเว็บไซต์มีส่วนย่อย (subdomain) ที่แปลก เช่น มีตัวเลขหรือสัญลักษณ์ที่ไม่น่าเชื่อถือ ซึ่งอาจเป็นสัญญาณของเว็บปลอม โปรดระวัง`;
+      break;
+    case 'punycode (homograph) detected':
+      errorText = `ชื่อโดเมนใช้รหัสพิเศษ (punycode) ที่อาจถูกใช้หลอกลวงโดยการเลียนแบบชื่อเว็บจริง (homograph attack) โปรดตรวจสอบให้แน่ใจก่อนใช้งาน`;
+      break;
+    case 'invalid url':
+      errorText = `ลิงก์ที่ป้อนไม่ถูกต้อง โปรดตรวจสอบ URL อีกครั้ง`;
+      break;
+  }
+
+  setModalMessage({
+    title: '⚠️ เว็บไซต์น่าสงสัย',
+    text: errorText,
+  });
+  setIsModalVisible(true);
+  return;
+}
+
 
     if (isHttp) {
       setModalMessage({
@@ -55,6 +100,8 @@ const BrowserMockup = () => {
       setWebViewSource({ uri: formattedUrl });
     }
   };
+
+
 
   const closeModal = () => {
     setIsModalVisible(false);
