@@ -108,8 +108,26 @@ const BrowserMockup = () => {
   setWebViewSource({ uri: formattedUrl });
 };
 
-// ตรวจ redirect หลังเริ่มโหลด
-const handleNavChange = (navState: any) => {
+
+
+  const closeModal = () => {
+    setIsModalVisible(false);
+  };
+
+  const proceedToUnsafeUrl = () => {
+    setIsModalVisible(false);
+    const formattedUrl = url.startsWith('http://') || url.startsWith('https://')
+      ? url
+      : `https://${url}`;
+    setWebViewSource({ uri: formattedUrl });
+  };
+
+const handleNavigationStateChange = (navState: WebViewNavigation) => {
+  // อัปเดตค่า UI
+  setUrl(navState.url);
+  setCanGoBack(navState.canGoBack);
+
+  // ตรวจ redirect ข้ามโดเมน
   try {
     const currentDomain = new URL(navState.url).hostname;
     if (initialDomain && currentDomain !== initialDomain) {
@@ -126,26 +144,8 @@ const handleNavChange = (navState: any) => {
   } catch (e) {
     console.log("Invalid URL in navigation");
   }
-};3
+};
 
-  const closeModal = () => {
-    setIsModalVisible(false);
-  };
-
-  const proceedToUnsafeUrl = () => {
-    setIsModalVisible(false);
-    const formattedUrl = url.startsWith('http://') || url.startsWith('https://')
-      ? url
-      : `https://${url}`;
-    setWebViewSource({ uri: formattedUrl });
-  };
-
-  const handleNavigationStateChange = (navState: WebViewNavigation) => {
-    // อัปเดต URL ใน input field ให้ตรงกับหน้าเว็บที่แสดงอยู่
-    setUrl(navState.url);
-    setCanGoBack(navState.canGoBack);
-    console.log('Current URL:', navState.url);
-  };
 
   const goBack = () => {
     if (canGoBack && webViewRef.current) {
