@@ -20,12 +20,18 @@ interface Message {
 }
 
 // กำหนดความสูงของเมนูนำทาง (tab bar)
+<<<<<<< HEAD
+=======
+// ***สำคัญ: คุณต้องปรับค่านี้ให้พอดีกับความสูงของเมนูนำทางของคุณ***
+// จากรูปภาพที่คุณส่งมา ลองใช้ค่า 110
+>>>>>>> 3dfa76a76ceed62326eb5304e356c8b709bf7c7b
 const TAB_BAR_HEIGHT = 0;
 
 const Chatpage = () => {
   const [messageText, setMessageText] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
 
+<<<<<<< HEAD
   const getGuardianResponse = (userMessage: string): { type: 'scam' | 'normal'; text: string } => {
     const lowerCaseMessage = userMessage.toLowerCase();
     
@@ -59,6 +65,21 @@ const Chatpage = () => {
     
     // ถ้าไม่เข้าเงื่อนไขใดๆ เลย จะตอบกลับข้อความนี้
     return { type: 'normal', text: 'ขอโทษค่ะ ฉันยังไม่เข้าใจคำถามของคุณ' };
+=======
+  // ฟังก์ชันสำหรับสร้างการตอบกลับจาก AI แบบง่ายๆ
+  const getAIResponse = (userMessage: string): string => {
+    const lowerCaseMessage = userMessage.toLowerCase();
+
+    if (lowerCaseMessage.includes('สวัสดี') || lowerCaseMessage.includes('หวัดดี')) {
+      return 'สวัสดีค่ะ! ยินดีที่ได้พูดคุยกับคุณนะคะ 😊';
+    } else if (lowerCaseMessage.includes('สบายดีไหม')) {
+      return 'ฉันเป็น AI ค่ะ เลยไม่รู้สึกอะไร แต่ก็ยินดีที่ได้ทำงานให้คุณค่ะ!';
+    } else if (lowerCaseMessage.includes('ช่วยอะไรได้บ้าง')) {
+      return 'ฉันสามารถตอบคำถามง่ายๆ หรือพูดคุยทั่วไปกับคุณได้ค่ะ';
+    } else {
+      return 'ขอโทษค่ะ ฉันยังไม่เข้าใจคำถามของคุณ';
+    }
+>>>>>>> 3dfa76a76ceed62326eb5304e356c8b709bf7c7b
   };
 
   const handleSendMessage = () => {
@@ -70,6 +91,7 @@ const Chatpage = () => {
         sender: 'user',
       };
 
+<<<<<<< HEAD
       setMessages(prevMessages => [userMessage, ...prevMessages]);
       setMessageText('');
 
@@ -86,6 +108,24 @@ const Chatpage = () => {
 
         setMessages(prevMessages => [responseMessage, ...prevMessages]);
       }, 1000);
+=======
+      // เพิ่มข้อความของผู้ใช้ลงในรายการ
+      setMessages(prevMessages => [userMessage, ...prevMessages]);
+      setMessageText('');
+
+      // ***ส่วนสำคัญ: เพิ่มการตอบกลับอัตโนมัติจาก AI***
+      // จำลองการหน่วงเวลา 1 วินาที เพื่อให้เหมือนกับการประมวลผล
+      setTimeout(() => {
+        const aiResponseText = getAIResponse(userMessageText); // ดึงข้อความตอบกลับจากฟังก์ชัน
+        const aiResponse: Message = {
+          id: (Date.now() + 1).toString(), // ใช้ ID ที่ไม่ซ้ำกับข้อความของผู้ใช้
+          text: aiResponseText,
+          sender: 'other',
+        };
+        // เพิ่มข้อความของ AI ลงในรายการ
+        setMessages(prevMessages => [aiResponse, ...prevMessages]);
+      }, 1000); // หน่วงเวลา 1000 มิลลิวินาที (1 วินาที)
+>>>>>>> 3dfa76a76ceed62326eb5304e356c8b709bf7c7b
     }
   };
 
@@ -108,6 +148,11 @@ const Chatpage = () => {
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
         <BarChatHeader />
+<<<<<<< HEAD
+=======
+
+        {/* KeyboardAvoidingView ต้องครอบคลุม FlatList และ NavChat */}
+>>>>>>> 3dfa76a76ceed62326eb5304e356c8b709bf7c7b
         <KeyboardAvoidingView
           style={styles.keyboardAvoidingView}
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
