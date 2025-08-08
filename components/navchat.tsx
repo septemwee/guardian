@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
   navChatContainer: {
     // กำหนด padding แทนการใช้ height คงที่ เพื่อให้ยืดหยุ่นมากขึ้น
     paddingVertical: 12,
-    marginBottom: 30,
+    marginBottom: 100,
     backgroundColor: 'white',
     width: '100%',
     borderTopWidth: 1,

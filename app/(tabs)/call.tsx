@@ -1,19 +1,19 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import {
+  ActivityIndicator,
+  Alert,
+  Dimensions,
+  Modal,
+  Platform,
   SafeAreaView,
+  ScrollView,
+  StatusBar,
   StyleSheet,
-  View,
   Text,
   TouchableOpacity,
-  ScrollView,
-  Dimensions,
-  Platform,
-  StatusBar,
-  Modal,
-  Alert,
-  ActivityIndicator,
+  View,
 } from 'react-native';
-import Svg, { Path, Circle } from 'react-native-svg';
+import Svg, { Circle, Path } from 'react-native-svg';
 
 // ขนาดหน้าจอสำหรับ responsive UI
 const { width, height } = Dimensions.get('window');
@@ -99,7 +99,7 @@ const AntiScamVoiceApp = () => {
 
       if (text.includes('โชคดีได้รับรางวัล') || text.includes('โอนเงินค่าธรรมเนียม') || text.includes('รีบหน่อยนะครับ') || text.includes('โอกาสสุดท้าย') || text.includes('บัตรประชาชน')) {
         level = 'high';
-        if (text.includes('โชคดีได้รับรางวัล')) details.push('ข้อเสนอที่น่าเหลือเชื่อ');
+        if (text.includes('โชคดีได้รับรางวัล')) details.push('ข้อเสนอเกินจริง');
         if (text.includes('โอนเงินค่าธรรมเนียม')) details.push('เรียกเก็บค่าธรรมเนียมที่ไม่สมเหตุสมผล');
         if (text.includes('รีบหน่อยนะครับ') || text.includes('โอกาสสุดท้าย') || text.includes('ถ้าไม่ทำตอนนี้จะพลาดโอกาส')) details.push('การใช้คำพูดเร่งรัด/กดดัน');
         if (text.includes('บัตรประชาชน')) details.push('การขอข้อมูลส่วนตัวที่ละเอียดอ่อน');
@@ -331,7 +331,7 @@ const AntiScamVoiceApp = () => {
               <Text style={styles.modalRecommendationTitle}>คำแนะนำ:</Text>
               <Text style={styles.modalRecommendationText}>
                 {riskLevel === 'high'
-                  ? 'ไม่ควรให้ข้อมูลส่วนตัวใดๆ และควรติดต่อหน่วยงานที่ถูกอ้างอิงโดยตรงเพื่อตรวจสอบ หรือแจ้งความทันที'
+                  ? 'ไม่ควรให้ข้อมูลส่วนตัวใด ๆ และควรติดต่อหน่วยงานที่ถูกอ้างอิงโดยตรงเพื่อตรวจสอบ หรือแจ้งความทันที'
                   : riskLevel === 'low'
                     ? 'ควรระมัดระวังเป็นพิเศษ และตรวจสอบข้อมูลให้แน่ใจก่อนดำเนินการใดๆ'
                     : 'การสนทนาดูปลอดภัย แต่ควรระวังเสมอเมื่อมีบุคคลแปลกหน้าติดต่อมา'}
