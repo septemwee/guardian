@@ -4,9 +4,7 @@ import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 
 // --- Main App Component ---
-// This component now serves as the single, static screen.
 const App = () => {
-  // Use state for statistical data to make it dynamic and ready for future updates.
   const [stats] = useState({
     suspiciousMessages: 5,
     suspiciousCalls: 12,
@@ -54,7 +52,7 @@ const App = () => {
           <View style={styles.statCard}>
             <Ionicons name="globe-outline" size={30} color="#D60000" />
             <Text style={styles.statNumber}>{stats.suspiciousWebsites}</Text>
-            <Text style={styles.statText}>เว็บ</Text>
+            <Text style={styles.statText}>เว็บไซต์</Text>
           </View>
         </View>
       </View>
@@ -98,11 +96,12 @@ const styles = StyleSheet.create({
   dashboardContainer: {
     flex: 1,
     paddingHorizontal: 20,
-    marginTop: 20,
+    marginTop: 10,
   },
   dashboardHeader: {
     fontSize: 20,
     fontWeight: 'bold',
+    marginLeft: 10,
     marginBottom: 20,
     color: '#333',
   },
@@ -115,7 +114,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     borderRadius: 20,
-    padding: 15,
+    padding: 20,
     alignItems: 'center',
     marginHorizontal: 5,
     shadowColor: '#000',
@@ -129,11 +128,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#333',
     marginTop: 10,
+    textAlign: 'center',
   },
   statText: {
     fontSize: 14,
     color: '#888',
     marginTop: 5,
+    textAlign: 'center',
   },
   scanButton: {
     backgroundColor: '#D60000',
