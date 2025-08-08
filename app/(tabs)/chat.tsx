@@ -9,7 +9,10 @@ import {
   StyleSheet,
   Text,
   View,
+<<<<<<< Updated upstream
   KeyboardAvoidingView, // Import KeyboardAvoidingView
+=======
+>>>>>>> Stashed changes
 } from 'react-native';
 
 // สร้าง Interface สำหรับกำหนดชนิดของข้อมูลในแต่ละข้อความ
@@ -20,6 +23,7 @@ interface Message {
 }
 
 const Chatpage = () => {
+<<<<<<< Updated upstream
   // สถานะสำหรับเก็บข้อความที่ผู้ใช้กำลังพิมพ์
   const [messageText, setMessageText] = useState('');
 
@@ -28,6 +32,10 @@ const Chatpage = () => {
   const [messages, setMessages] = useState<Message[]>([]);
 
   // กำหนดผู้ส่งปัจจุบัน (user หรือ other)
+=======
+  const [messageText, setMessageText] = useState('');
+  const [messages, setMessages] = useState<Message[]>([]);
+>>>>>>> Stashed changes
   const [currentSender, setCurrentSender] = useState<'user' | 'other'>('user');
 
   // ฟังก์ชันสำหรับส่งข้อความ
@@ -41,9 +49,25 @@ const Chatpage = () => {
         sender: currentSender, // กำหนดผู้ส่ง
       };
 
+<<<<<<< Updated upstream
       // เพิ่มข้อความใหม่เข้าไปใน Array ของข้อความเดิม
       setMessages(prevMessages => [newMessage, ...prevMessages]);
       // ล้างช่องกรอกข้อความ
+=======
+      // 2. สร้างข้อความตอบกลับจาก AI
+      const aiResponseText = `คุณพิมพ์มาว่า: "${messageText}"`; // นี่คือข้อความจำลองจาก AI
+      const aiMessage: Message = {
+        id: (Date.now() + 1).toString(), // ใช้ timestamp ที่ต่างกันเพื่อให้มี ID ไม่ซ้ำกัน
+        text: aiResponseText,
+        sender: 'other', // กำหนดผู้ส่งเป็น 'other'
+      };
+
+      // 3. อัปเดต state ด้วยข้อความของผู้ใช้และข้อความของ AI
+      // เราใช้ functional update เพื่อให้แน่ใจว่าได้ state ที่อัปเดตล่าสุด
+      setMessages(prevMessages => [aiMessage, userMessage, ...prevMessages]);
+
+      // 4. ล้างช่องกรอกข้อความ
+>>>>>>> Stashed changes
       setMessageText('');
     }
   };
@@ -51,23 +75,40 @@ const Chatpage = () => {
   // Render function สำหรับแสดงแต่ละข้อความ
   // กำหนดชนิดของ item ให้ตรงกับ Message Interface
   const renderMessage = ({ item }: { item: Message }) => (
+<<<<<<< Updated upstream
     <View style={item.sender === 'user' ? styles.userMessageContainer : styles.otherMessageContainer}>
+=======
+    <View
+      style={
+        item.sender === 'user'
+          ? styles.userMessageContainer
+          : styles.otherMessageContainer
+      }
+    >
+>>>>>>> Stashed changes
       <Text style={styles.messageText}>{item.text}</Text>
     </View>
   );
 
+<<<<<<< Updated upstream
   // ฟังก์ชันสำหรับสลับผู้ส่ง
   const handleToggleSender = () => {
     setCurrentSender(prevSender => (prevSender === 'user' ? 'other' : 'user'));
   };
 
+=======
+>>>>>>> Stashed changes
   return (
     <SafeAreaView style={styles.safeArea}>
       {/* ใช้ KeyboardAvoidingView ครอบ View หลัก */}
       <KeyboardAvoidingView
         style={styles.keyboardAvoidingView}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+<<<<<<< Updated upstream
         keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0} // ปรับ offset ถ้าจำเป็น
+=======
+        keyboardVerticalOffset={0}
+>>>>>>> Stashed changes
       >
         <View style={styles.container}>
           {/* Header Component */}
