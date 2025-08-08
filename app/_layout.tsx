@@ -5,6 +5,7 @@ import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
+import { applyGlobalFont } from './lib/global-font';
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
@@ -13,9 +14,11 @@ export default function RootLayout() {
   });
 
   if (!loaded) {
-    // Async font loading only occurs in development.
     return null;
   }
+
+  // ✅ เรียกใช้ global font ที่นี่ หลังโหลดเสร็จ
+  applyGlobalFont('Kanit');
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
