@@ -21,21 +21,52 @@ interface Message {
 // กำหนดความสูงของเมนูนำทาง (tab bar)
 // ***สำคัญ: คุณต้องปรับค่านี้ให้พอดีกับความสูงของเมนูนำทางของคุณ***
 // จากรูปภาพที่คุณส่งมา ลองใช้ค่า 110
-const TAB_BAR_HEIGHT = 0; 
+const TAB_BAR_HEIGHT = 0;
 
 const Chatpage = () => {
   const [messageText, setMessageText] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
 
+  // ฟังก์ชันสำหรับสร้างการตอบกลับจาก AI แบบง่ายๆ
+  const getAIResponse = (userMessage: string): string => {
+    const lowerCaseMessage = userMessage.toLowerCase();
+
+    if (lowerCaseMessage.includes('สวัสดี') || lowerCaseMessage.includes('หวัดดี')) {
+      return 'สวัสดีค่ะ! ยินดีที่ได้พูดคุยกับคุณนะคะ 😊';
+    } else if (lowerCaseMessage.includes('สบายดีไหม')) {
+      return 'ฉันเป็น AI ค่ะ เลยไม่รู้สึกอะไร แต่ก็ยินดีที่ได้ทำงานให้คุณค่ะ!';
+    } else if (lowerCaseMessage.includes('ช่วยอะไรได้บ้าง')) {
+      return 'ฉันสามารถตอบคำถามง่ายๆ หรือพูดคุยทั่วไปกับคุณได้ค่ะ';
+    } else {
+      return 'ขอโทษค่ะ ฉันยังไม่เข้าใจคำถามของคุณ';
+    }
+  };
+
   const handleSendMessage = () => {
     if (messageText.trim()) {
+      const userMessageText = messageText;
       const userMessage: Message = {
         id: Date.now().toString(),
-        text: messageText,
+        text: userMessageText,
         sender: 'user',
       };
+
+      // เพิ่มข้อความของผู้ใช้ลงในรายการ
       setMessages(prevMessages => [userMessage, ...prevMessages]);
       setMessageText('');
+
+      // ***ส่วนสำคัญ: เพิ่มการตอบกลับอัตโนมัติจาก AI***
+      // จำลองการหน่วงเวลา 1 วินาที เพื่อให้เหมือนกับการประมวลผล
+      setTimeout(() => {
+        const aiResponseText = getAIResponse(userMessageText); // ดึงข้อความตอบกลับจากฟังก์ชัน
+        const aiResponse: Message = {
+          id: (Date.now() + 1).toString(), // ใช้ ID ที่ไม่ซ้ำกับข้อความของผู้ใช้
+          text: aiResponseText,
+          sender: 'other',
+        };
+        // เพิ่มข้อความของ AI ลงในรายการ
+        setMessages(prevMessages => [aiResponse, ...prevMessages]);
+      }, 1000); // หน่วงเวลา 1000 มิลลิวินาที (1 วินาที)
     }
   };
 
@@ -55,7 +86,7 @@ const Chatpage = () => {
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
         <BarChatHeader />
-        
+
         {/* KeyboardAvoidingView ต้องครอบคลุม FlatList และ NavChat */}
         <KeyboardAvoidingView
           style={styles.keyboardAvoidingView}
@@ -87,17 +118,17 @@ const styles = StyleSheet.create({
     paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
   container: {
-    flex: 1, // ***สำคัญ: container ต้องมี flex: 1 เพื่อให้ขยายเต็มหน้าจอ***
+    flex: 1,
     backgroundColor: '#F5F5F5',
   },
   keyboardAvoidingView: {
-    flex: 1, // ***สำคัญ: keyboardAvoidingView ต้องมี flex: 1 เพื่อให้ขยายเต็มพื้นที่ที่เหลือ***
+    flex: 1,
   },
   chatContent: {
     paddingTop: 20,
     paddingBottom: 20,
     justifyContent: 'flex-end',
-    flexGrow: 1, // ***สำคัญ: flexGrow: 1 จะช่วยให้ FlatList ขยายเต็มพื้นที่ที่เหลือ***
+    flexGrow: 1,
   },
   userMessageContainer: {
     backgroundColor: '#DCF8C6',
