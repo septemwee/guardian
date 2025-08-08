@@ -128,22 +128,22 @@ const handleNavigationStateChange = (navState: WebViewNavigation) => {
   setCanGoBack(navState.canGoBack);
 
   // ตรวจ redirect ข้ามโดเมน
-  try {
-    const currentDomain = new URL(navState.url).hostname;
-    if (initialDomain && currentDomain !== initialDomain) {
-      const redirectError = `พบการ redirect ข้ามโดเมน: ${initialDomain} → ${currentDomain}`;
-      if (!errors.includes(redirectError)) {
-        setErrors(prev => [...prev, redirectError]);
-        setModalMessage({
-          title: '⚠️ ตรวจพบการ redirect',
-          text: redirectError,
-        });
-        setIsModalVisible(true);
-      }
-    }
-  } catch (e) {
-    console.log("Invalid URL in navigation");
-  }
+  // try {
+  //   const currentDomain = new URL(navState.url).hostname;
+  //   if (initialDomain && currentDomain !== initialDomain) {
+  //     const redirectError = `พบการ redirect ข้ามโดเมน: ${initialDomain} → ${currentDomain}`;
+  //     if (!errors.includes(redirectError)) {
+  //       setErrors(prev => [...prev, redirectError]);
+  //       setModalMessage({
+  //         title: '⚠️ ตรวจพบการ redirect',
+  //         text: redirectError,
+  //       });
+  //       setIsModalVisible(true);
+  //     }
+  //   }
+  // } catch (e) {
+  //   console.log("Invalid URL in navigation");
+  // }
 };
 
 
