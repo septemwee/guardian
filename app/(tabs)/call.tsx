@@ -1,30 +1,26 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import {
+  ActivityIndicator,
+  Alert,
+  Dimensions,
+  Modal,
+  Platform,
   SafeAreaView,
+  ScrollView,
+  StatusBar,
   StyleSheet,
-  View,
   Text,
   TouchableOpacity,
-  ScrollView,
-  Dimensions,
-  Platform,
-  StatusBar,
-  Modal,
-  Alert,
-  ActivityIndicator,
+  View,
 } from 'react-native';
-import Svg, { Path, Circle } from 'react-native-svg';
+import Svg, { Circle, Path } from 'react-native-svg';
 
-// ขนาดหน้าจอสำหรับ responsive UI
 const { width, height } = Dimensions.get('window');
 
-// -------------------------------------------------------------------
-// Component: AntiScamVoiceApp
-// -------------------------------------------------------------------
 const AntiScamVoiceApp = () => {
   const [isRecording, setIsRecording] = useState(false);
   const [transcribedText, setTranscribedText] = useState('');
-  const [riskLevel, setRiskLevel] = useState<'none' | 'safe' | 'low' | 'high'>('none'); // none, safe, low, high
+  const [riskLevel, setRiskLevel] = useState<'none' | 'safe' | 'low' | 'high'>('none');
   const [riskDetails, setRiskDetails] = useState<string[]>([]);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [timerSeconds, setTimerSeconds] = useState(0);
@@ -33,7 +29,6 @@ const AntiScamVoiceApp = () => {
   const timerIntervalRef = useRef<number | null>(null);
   const typingIntervalRef = useRef<number | null>(null);
 
-  // ฟังก์ชันสำหรับจำลองการบันทึกเสียงและการวิเคราะห์
   const startRecording = () => {
     setIsRecording(true);
     setTranscribedText('');
@@ -42,12 +37,10 @@ const AntiScamVoiceApp = () => {
     setTimerSeconds(0);
     setIsProcessing(false);
 
-    // เริ่มจับเวลา
     timerIntervalRef.current = setInterval(() => {
       setTimerSeconds(prev => prev + 1);
     }, 1000);
 
-    // จำลองการรับเสียงและแปลงเป็นข้อความ
     let currentText = '';
     const mockTranscript = [
       "สวัสดีครับ",
@@ -73,10 +66,7 @@ const AntiScamVoiceApp = () => {
         clearInterval(typingIntervalRef.current as number);
         typingIntervalRef.current = null;
       }
-    }, 1500); // จำลองการพิมพ์ทีละประโยค
-
-    // ในแอปจริง คุณจะใช้ไลบรารี Speech-to-Text เช่น @react-native-community/voice
-    // หรือเชื่อมต่อกับ Google Cloud Speech-to-Text API ที่นี่
+    }, 1500);
   };
 
   const stopRecording = () => {
@@ -89,23 +79,22 @@ const AntiScamVoiceApp = () => {
       clearInterval(typingIntervalRef.current);
       typingIntervalRef.current = null;
     }
-    setIsProcessing(true); // เริ่มสถานะประมวลผล
+    setIsProcessing(true);
 
-    // จำลองการวิเคราะห์ความเสี่ยง
     setTimeout(() => {
       const text = transcribedText.toLowerCase();
       let level: 'safe' | 'low' | 'high' = 'safe';
       const details: string[] = [];
 
-      if (text.includes('โชคดีได้รับรางวัล') || text.includes('โอนเงินค่าธรรมเนียม') || text.includes('รีบหน่อยนะครับ') || text.includes('โอกาสสุดท้าย') || text.includes('บัตรประชาชน')) {
+      if (text.includes('โชคดีได้รับรางวัล') || text.includes('โอนเงินค่าธรรมเนียม') || text.includes('รีบหน่อยนะครับ') || text.includes('โอกาสสุดท้าย') || text.includes('บัตรประชาชน') || text.includes('ความลับ')) {
         level = 'high';
-        if (text.includes('โชคดีได้รับรางวัล')) details.push('ข้อเสนอที่น่าเหลือเชื่อ');
+        if (text.includes('โชคดีได้รับรางวัล')) details.push('ข้อเสนอเกินจริง');
         if (text.includes('โอนเงินค่าธรรมเนียม')) details.push('เรียกเก็บค่าธรรมเนียมที่ไม่สมเหตุสมผล');
         if (text.includes('รีบหน่อยนะครับ') || text.includes('โอกาสสุดท้าย') || text.includes('ถ้าไม่ทำตอนนี้จะพลาดโอกาส')) details.push('การใช้คำพูดเร่งรัด/กดดัน');
         if (text.includes('บัตรประชาชน')) details.push('การขอข้อมูลส่วนตัวที่ละเอียดอ่อน');
         if (text.includes('ความลับ')) details.push('การขอให้เก็บเป็นความลับ');
       } else if (text.includes('สวัสดีครับ')) {
-        level = 'safe'; // ถ้ามีแค่สวัสดีครับ ถือว่าปลอดภัย
+        level = 'safe';
       } else if (text.length > 0) {
         level = 'low';
         details.push('ไม่พบคำที่เข้าข่ายมิจฉาชีพชัดเจน แต่ควรระมัดระวัง');
@@ -113,15 +102,12 @@ const AntiScamVoiceApp = () => {
 
       setRiskLevel(level);
       setRiskDetails(details);
-      setIsProcessing(false); // สิ้นสุดสถานะประมวลผล
+      setIsProcessing(false);
 
-      // เพิ่มโค้ดใหม่: แสดง Modal ทันทีถ้าความเสี่ยงไม่เท่ากับ 'safe'
       if (level !== 'safe') {
         setShowDetailsModal(true);
       }
-
-      // ในแอปจริง คุณจะส่ง transcribedText ไปให้ AI/NLP model วิเคราะห์ที่นี่
-    }, 3000); // จำลองเวลาประมวลผล 3 วินาที
+    }, 3000);
   };
 
   const handleRecordButtonPress = () => {
@@ -140,50 +126,23 @@ const AntiScamVoiceApp = () => {
 
   const getRiskColor = (level: typeof riskLevel) => {
     switch (level) {
-      case 'safe': return '#28A745'; // เขียว
-      case 'low': return '#FFC107';  // เหลือง
-      case 'high': return '#DC3545'; // แดง
-      default: return '#8D8B8B'; // เทา
+      case 'safe': return '#28A745';
+      case 'low': return '#FFC107';
+      case 'high': return '#DC3545';
+      default: return '#8D8B8B';
     }
   };
 
-  // const getRiskText = (level: typeof riskLevel) => {
-  //   switch (level) {
-  //     case 'safe': return 'ปลอดภัย';
-  //     case 'low': return 'ความเสี่ยงต่ำ';
-  //     case 'high': return 'อันตราย! เข้าข่ายมิจฉาชีพ';
-  //     case 'none': return 'ยังไม่มีการวิเคราะห์';
-  //     default: return '';
-  //   }
-  // };
-
-  const getRiskIcon = (level: typeof riskLevel) => {
+  const getRiskText = (level: typeof riskLevel) => {
     switch (level) {
-      case 'safe': return (
-        <Svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke={getRiskColor(level)} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <Path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></Path>
-          <Path d="M9 12l2 2 4-4"></Path>
-        </Svg>
-      ); // โล่ + ถูก
-      case 'low': return (
-        <Svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke={getRiskColor(level)} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <Path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></Path>
-          <Path d="M12 9v4"></Path>
-          <Path d="M12 17h.01"></Path>
-        </Svg>
-      ); // สามเหลี่ยมเตือน
-      case 'high': return (
-        <Svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke={getRiskColor(level)} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <Circle cx="12" cy="12" r="10"></Circle>
-          <Path d="M15 9l-6 6"></Path>
-          <Path d="M9 9l6 6"></Path>
-        </Svg>
-      ); // กากบาท
-      default: return null;
+      case 'safe': return 'ปลอดภัย';
+      case 'low': return 'ความเสี่ยงต่ำ';
+      case 'high': return 'อันตราย! เข้าข่ายมิจฉาชีพ';
+      case 'none': return 'ยังไม่มีการวิเคราะห์';
+      default: return '';
     }
   };
 
-  // แก้ไข: กำหนดประเภทของ array 'highlightedText' ให้เป็น React.ReactNode[] เพื่อแก้ปัญหา implicit any
   const highlightScamWords = (text: string): React.ReactNode => {
     const scamKeywords = ['โอนเงิน', 'รางวัล', 'ค่าธรรมเนียม', 'ด่วน', 'โอกาสสุดท้าย', 'บัตรประชาชน', 'ความลับ'];
     let highlightedText: React.ReactNode[] = [];
@@ -221,10 +180,8 @@ const AntiScamVoiceApp = () => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
-        {/* Header */}
         <View style={styles.header}>
           <Text style={styles.appName}>Anti-Scam Voice AI</Text>
-          {/* Optional: ปุ่มประวัติ */}
           <TouchableOpacity style={styles.historyButton}>
             <Svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#333" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <Path d="M12 2v10.5h4"></Path>
@@ -233,7 +190,6 @@ const AntiScamVoiceApp = () => {
           </TouchableOpacity>
         </View>
 
-        {/* Recording Area */}
         <View style={styles.recordingArea}>
           <TouchableOpacity
             style={[styles.recordButton, isRecording && styles.recordButtonActive]}
@@ -243,32 +199,10 @@ const AntiScamVoiceApp = () => {
             {isProcessing ? (
               <ActivityIndicator size="large" color="#FFFFFF" />
             ) : (
-              <Svg width="60" height="60" viewBox="0 0 24 24" fill="none">
-                <Path
-                  d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"
-                  fill={isRecording ? '#FFFFFF' : '#8D8B8B'}
-                />
-                <Path
-                  d="M19 10v2a7 7 0 0 1-14 0v-2"
-                  stroke={isRecording ? '#FFFFFF' : '#8D8B8B'}
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <Path
-                  d="M12 19v4"
-                  stroke={isRecording ? '#FFFFFF' : '#8D8B8B'}
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <Path
-                  d="M8 23h8"
-                  stroke={isRecording ? '#FFFFFF' : '#8D8B8B'}
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
+              <Svg width="60" height="60" viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <Path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke={isRecording ? '#FFFFFF' : '#8D8B8B'} />
+                <Path d="M17 8l-5-5-5 5" stroke={isRecording ? '#FFFFFF' : '#8D8B8B'} />
+                <Path d="M12 3v12" stroke={isRecording ? '#FFFFFF' : '#8D8B8B'} />
               </Svg>
             )}
           </TouchableOpacity>
@@ -277,11 +211,10 @@ const AntiScamVoiceApp = () => {
               ? 'กำลังประมวลผล...'
               : isRecording
                 ? `กำลังบันทึก... ${formatTime(timerSeconds)}`
-                : 'แตะเพื่อเริ่มบันทึกเสียง'}
+                : 'แตะเพื่ออัปโหลดเสียง'}
           </Text>
         </View>
 
-        {/* Transcribed Text Display */}
         <ScrollView style={styles.transcribedTextContainer} contentContainerStyle={styles.transcribedTextContent}>
           {transcribedText ? (
             highlightScamWords(transcribedText)
@@ -292,23 +225,6 @@ const AntiScamVoiceApp = () => {
           )}
         </ScrollView>
 
-        {/* Analysis Result */}
-        {/* {riskLevel !== 'none' && !isProcessing && (
-          <View style={[styles.analysisResultContainer, { backgroundColor: getRiskColor(riskLevel) }]}>
-            <View style={styles.analysisHeader}>
-              {getRiskIcon(riskLevel)}
-              <Text style={styles.analysisResultText}>{getRiskText(riskLevel)}</Text>
-            </View> */}
-            {/* ปุ่มนี้จะไม่แสดง ถ้า Modal แสดงอัตโนมัติ */}
-            {/* {riskLevel !== 'safe' && !showDetailsModal && (
-              <TouchableOpacity style={styles.detailsButton} onPress={() => setShowDetailsModal(true)}>
-                <Text style={styles.detailsButtonText}>ดูรายละเอียด / คำแนะนำ</Text>
-              </TouchableOpacity>
-            )}
-          </View>
-        )} */}
-
-        {/* Modal for Risk Details */}
         <Modal
           animationType="slide"
           transparent={true}
@@ -318,9 +234,9 @@ const AntiScamVoiceApp = () => {
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
               <Text style={styles.modalTitle}>รายละเอียดการวิเคราะห์</Text>
-              {/* <Text style={[styles.modalSubtitle, { color: getRiskColor(riskLevel) }]}>
+              <Text style={[styles.modalSubtitle, { color: getRiskColor(riskLevel) }]}>
                 {getRiskText(riskLevel)}
-              </Text> */}
+              </Text>
               {riskDetails.length > 0 ? (
                 riskDetails.map((detail, index) => (
                   <Text key={index} style={styles.modalDetailText}>• {detail}</Text>
@@ -331,7 +247,7 @@ const AntiScamVoiceApp = () => {
               <Text style={styles.modalRecommendationTitle}>คำแนะนำ:</Text>
               <Text style={styles.modalRecommendationText}>
                 {riskLevel === 'high'
-                  ? 'ไม่ควรให้ข้อมูลส่วนตัวใดๆ และควรติดต่อหน่วยงานที่ถูกอ้างอิงโดยตรงเพื่อตรวจสอบ หรือแจ้งความทันที'
+                  ? 'ไม่ควรให้ข้อมูลส่วนตัวใด ๆ และควรติดต่อหน่วยงานที่ถูกอ้างอิงโดยตรงเพื่อตรวจสอบ หรือแจ้งความทันที'
                   : riskLevel === 'low'
                     ? 'ควรระมัดระวังเป็นพิเศษ และตรวจสอบข้อมูลให้แน่ใจก่อนดำเนินการใดๆ'
                     : 'การสนทนาดูปลอดภัย แต่ควรระวังเสมอเมื่อมีบุคคลแปลกหน้าติดต่อมา'}
@@ -364,9 +280,6 @@ const AntiScamVoiceApp = () => {
   );
 };
 
-// -------------------------------------------------------------------
-// Styles
-// -------------------------------------------------------------------
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
@@ -418,7 +331,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   recordButtonActive: {
-    backgroundColor: '#DC3545', // สีแดงเมื่อกำลังบันทึก
+    backgroundColor: '#DC3545',
   },
   statusText: {
     fontSize: 18,
@@ -426,12 +339,12 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   transcribedTextContainer: {
-    flex: 1, // ให้กินพื้นที่ที่เหลือ
+    flex: 1,
     width: '100%',
     backgroundColor: '#FFFFFF',
     borderRadius: 15,
     padding: 15,
-    marginBottom: 180,
+    marginBottom: 100,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
@@ -439,7 +352,7 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   transcribedTextContent: {
-    flexGrow: 1, // ทำให้ ScrollView ยืดได้
+    flexGrow: 1,
   },
   placeholderText: {
     fontSize: 16,
@@ -456,9 +369,9 @@ const styles = StyleSheet.create({
   highlightedWord: {
     fontSize: 17,
     lineHeight: 28,
-    color: '#DC3545', // สีแดงสำหรับคำที่น่าสงสัย
+    color: '#DC3545',
     fontWeight: 'bold',
-    backgroundColor: '#FFEBEE', // พื้นหลังสีอ่อนสำหรับไฮไลต์
+    backgroundColor: '#FFEBEE',
     borderRadius: 5,
     paddingHorizontal: 2,
   },
@@ -497,8 +410,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
-
-  // Modal Styles
   centeredView: {
     flex: 1,
     justifyContent: 'center',
