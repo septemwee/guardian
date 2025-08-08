@@ -1,8 +1,7 @@
-import { Stack, Slot, usePathname, Link } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
+import { Link, Slot, usePathname } from 'expo-router';
 import React from 'react';
-import { StyleSheet, View, Text, SafeAreaView, TouchableOpacity, Platform } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { Platform, SafeAreaView, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 // Layout component ที่จะใช้หุ้มหน้าอื่นๆ ใน Expo Router
 const Layout = () => {
