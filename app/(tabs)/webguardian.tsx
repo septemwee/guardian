@@ -1,7 +1,7 @@
-import React, { useState, useRef } from 'react';
-import { StyleSheet, View, Text, TextInput, TouchableOpacity, Modal, ActivityIndicator } from 'react-native';
-import WebView, { WebViewNavigation, WebViewMessageEvent } from 'react-native-webview';
 import { Ionicons } from '@expo/vector-icons';
+import React, { useRef, useState } from 'react';
+import { ActivityIndicator, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import WebView, { WebViewMessageEvent, WebViewNavigation } from 'react-native-webview';
 
 // รายการเว็บไซต์ที่น่าสงสัยและคำต้องสงสัย
 const suspiciousWebsites = ['malicious.com', 'phishing-site.net', 'suspicious-domain.org'];
@@ -182,13 +182,13 @@ const BrowserMockup = () => {
                 style={[styles.modalButton, styles.modalCloseButton]}
                 onPress={closeModal}
               >
-                <Text style={styles.modalButtonText}>ปิด</Text>
+                <Text style={styles.modalButtonText}>เข้าชมต่อ</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.modalButton, styles.modalProceedButton]}
                 onPress={proceedToUnsafeUrl}
               >
-                <Text style={styles.modalButtonText}>เข้าชมต่อ</Text>
+                <Text style={styles.modalButtonText}>แจ้งรายงาน</Text>
               </TouchableOpacity>
             </View>
           </View>
