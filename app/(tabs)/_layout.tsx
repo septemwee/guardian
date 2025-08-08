@@ -37,13 +37,13 @@ const Layout = () => {
             </TouchableOpacity>
           </Link>
 
-          <Link href="/browser" asChild>
+          <Link href="/webguardian" asChild>
             <TouchableOpacity style={styles.navButton}>
-              <View style={[styles.navIconContainer, getIconBackground('/browser')]}>
+              <View style={[styles.navIconContainer, getIconBackground('/webguardian')]}>
                 <Ionicons
                   name="search-outline"
                   size={28}
-                  color={getIconColor('/browser')}
+                  color={getIconColor('/webguardian')}
                 />
               </View>
             </TouchableOpacity>
