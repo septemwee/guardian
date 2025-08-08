@@ -1,68 +1,128 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { StyleSheet, View, Text, TextInput, TouchableOpacity, Modal, ActivityIndicator } from 'react-native';
-import WebView from 'react-native-webview';
-import { Ionicons } from '@expo/vector-icons'; // Import Ionicons เพื่อใช้ไอคอน
+import WebView, { WebViewNavigation, WebViewMessageEvent } from 'react-native-webview';
+import { Ionicons } from '@expo/vector-icons';
 
-// รายชื่อเว็บไซต์ที่น่าสงสัย
+// รายการเว็บไซต์ที่น่าสงสัยและคำต้องสงสัย
 const suspiciousWebsites = ['malicious.com', 'phishing-site.net', 'suspicious-domain.org'];
+const suspiciousKeywords = ['โอนเงิน', 'รับรางวัล', 'ด่วน', 'ผู้โชคดี', 'ข้อมูลส่วนตัว'];
+
+// สร้าง type ใหม่สำหรับ WebViewSource เพื่อแก้ปัญหา type error
+type WebViewSourceType = { uri: string } | { html: string };
 
 const BrowserMockup = () => {
+  const webViewRef = useRef<WebView>(null);
   const [url, setUrl] = useState('');
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [currentUrl, setCurrentUrl] = useState('https://google.com'); // ตั้งค่าเริ่มต้นเป็นเว็บจริง
+  const [webViewSource, setWebViewSource] = useState<WebViewSourceType>({ uri: 'https://www.google.com' });
   const [isLoading, setIsLoading] = useState(false);
+  const [modalMessage, setModalMessage] = useState({ title: '', text: '' });
+  const [canGoBack, setCanGoBack] = useState(false);
 
   // ฟังก์ชันสำหรับจัดการเมื่อผู้ใช้กดปุ่ม 'Go'
-  const handleGo = () => {
-    // เพิ่ม console.log เพื่อแสดง URL ที่ผู้ใช้กรอกเข้ามา
-    console.log('User entered URL:', url);
-    
-    if (!url.trim()) return; // ไม่ทำอะไรถ้าไม่มี URL
+  const handleGo = (inputUrl: string = url) => {
+    if (!inputUrl.trim()) {
+      setWebViewSource({ uri: 'https://www.google.com' });
+      return;
+    }
 
-    // เพิ่ม "https://" ถ้าผู้ใช้ไม่ได้ใส่
-    const formattedUrl = url.startsWith('http://') || url.startsWith('https://')
-      ? url
-      : `https://${url}`;
+    let formattedUrl;
+    // ตรวจสอบว่าเป็น URL หรือไม่ และเพิ่ม https:// ถ้าจำเป็น
+    if (inputUrl.startsWith('http://') || inputUrl.startsWith('https://')) {
+      formattedUrl = inputUrl;
+    } else {
+      formattedUrl = `https://${inputUrl}`;
+    }
 
-    // เพิ่ม console.log เพื่อแสดง URL ที่ถูกประมวลผลแล้ว
-    console.log('Formatted URL:', formattedUrl);
+    const isSuspiciousWebsite = suspiciousWebsites.some(suspiciousUrl => formattedUrl.includes(suspiciousUrl));
+    const isHttp = formattedUrl.startsWith('http://') && !formattedUrl.startsWith('https://');
 
-    // ตรวจสอบเว็บไซต์ที่น่าสงสัย
-    const isSuspicious = suspiciousWebsites.some(suspiciousUrl => formattedUrl.includes(suspiciousUrl));
-    if (isSuspicious) {
+    if (isHttp) {
+      setModalMessage({
+        title: '⚠️ การเชื่อมต่อไม่ปลอดภัย',
+        text: 'เว็บไซต์นี้ใช้การเชื่อมต่อแบบ HTTP ซึ่งอาจไม่ปลอดภัย กรุณาใช้ความระมัดระวัง',
+      });
+      setIsModalVisible(true);
+    } else if (isSuspiciousWebsite) {
+      setModalMessage({
+        title: '⚠️ เว็บไซต์น่าสงสัย',
+        text: 'เว็บไซต์นี้อาจเป็นอันตรายหรือหลอกลวง กรุณาใช้ความระมัดระวัง',
+      });
       setIsModalVisible(true);
     } else {
-      // โหลดเว็บจริงถ้าไม่ใช่เว็บน่าสงสัย
-      setCurrentUrl(formattedUrl);
+      setWebViewSource({ uri: formattedUrl });
     }
   };
 
-  // ฟังก์ชันปิด Modal
   const closeModal = () => {
     setIsModalVisible(false);
   };
 
-  // ฟังก์ชันสำหรับไปยัง URL ที่ผู้ใช้เลือกจาก Modal (ถ้าต้องการ)
   const proceedToUnsafeUrl = () => {
     setIsModalVisible(false);
-    setCurrentUrl(url.startsWith('http://') || url.startsWith('https://')
+    const formattedUrl = url.startsWith('http://') || url.startsWith('https://')
       ? url
-      : `https://${url}`);
+      : `https://${url}`;
+    setWebViewSource({ uri: formattedUrl });
+  };
+
+  const handleNavigationStateChange = (navState: WebViewNavigation) => {
+    setUrl(navState.url);
+    setCanGoBack(navState.canGoBack);
+    console.log('Current URL:', navState.url);
+  };
+
+  const goBack = () => {
+    if (canGoBack && webViewRef.current) {
+      webViewRef.current.goBack();
+    } else {
+      setWebViewSource({ uri: 'https://www.google.com' });
+    }
+  };
+
+  // ฟังก์ชันสำหรับจัดการข้อมูลที่ส่งมาจาก WebView (เนื้อหาของหน้าเว็บ)
+  const handleOnMessage = (event: WebViewMessageEvent) => {
+    try {
+      const pageContent = event.nativeEvent.data;
+      const lowerCaseContent = pageContent.toLowerCase();
+
+      // ตรวจสอบคำต้องสงสัยในเนื้อหา
+      const foundKeyword = suspiciousKeywords.find(keyword => 
+        lowerCaseContent.includes(keyword)
+      );
+
+      if (foundKeyword) {
+        setModalMessage({
+          title: '⚠️ พบเนื้อหาที่น่าสงสัย',
+          text: `หน้าเว็บนี้อาจมีเนื้อหาเกี่ยวกับการหลอกลวงหรือมิจฉาชีพ เช่นคำว่า "${foundKeyword}" กรุณาระวัง`,
+        });
+        setIsModalVisible(true);
+      }
+    } catch (e) {
+      console.error("Error parsing message from WebView", e);
+    }
   };
 
   return (
     <View style={styles.container}>
       {/* Address Bar */}
       <View style={styles.addressBar}>
+        <TouchableOpacity 
+          style={[styles.backButton, !canGoBack && styles.disabledButton]} 
+          onPress={goBack} 
+          disabled={!canGoBack}
+        >
+          <Ionicons name="arrow-back" size={24} color={canGoBack ? '#D60000' : '#888'} />
+        </TouchableOpacity>
         <TextInput
           style={styles.input}
           placeholder="Enter URL..."
           onChangeText={text => setUrl(text)}
           value={url}
           autoCapitalize="none"
-          onSubmitEditing={handleGo} // กด Enter บน Keyboard เพื่อ Go
+          onSubmitEditing={() => handleGo()}
         />
-        <TouchableOpacity style={styles.button} onPress={handleGo}>
+        <TouchableOpacity style={styles.goButton} onPress={() => handleGo()}>
           <Ionicons name="arrow-forward" size={24} color="#fff" />
         </TouchableOpacity>
       </View>
@@ -70,16 +130,30 @@ const BrowserMockup = () => {
       {/* WebView: แสดงเนื้อหาเว็บจริง */}
       <View style={styles.browserContent}>
         <WebView
-          source={{ uri: currentUrl }}
+          ref={webViewRef}
+          source={webViewSource}
           style={styles.webview}
           onLoadStart={() => setIsLoading(true)}
-          onLoadEnd={() => setIsLoading(false)}
+          onLoadEnd={() => {
+            setIsLoading(false);
+            // เมื่อโหลดหน้าเว็บเสร็จแล้ว ให้ส่ง JavaScript เพื่อดึงเนื้อหา
+            if (webViewRef.current) {
+              webViewRef.current.injectJavaScript(`
+                setTimeout(() => {
+                  window.ReactNativeWebView.postMessage(document.body.innerText);
+                }, 500); // ดีเลย์เล็กน้อยเพื่อให้เนื้อหาโหลดครบ
+                true;
+              `);
+            }
+          }}
+          onNavigationStateChange={handleNavigationStateChange}
+          onMessage={handleOnMessage} // รับข้อมูลจาก JavaScript ที่ถูก inject
           onError={(syntheticEvent) => {
             const { nativeEvent } = syntheticEvent;
             console.warn('WebView error: ', nativeEvent.description);
-            // สามารถเพิ่มการจัดการข้อผิดพลาด เช่น การแสดงหน้าจอ Error แทน
           }}
         />
+        
         {isLoading && (
           <View style={styles.loadingOverlay}>
             <ActivityIndicator size="large" color="#D60000" />
@@ -97,10 +171,8 @@ const BrowserMockup = () => {
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
             <Ionicons name="warning-outline" size={50} color="#e74c3c" />
-            <Text style={styles.modalTitle}>⚠️ เว็บไซต์น่าสงสัย</Text>
-            <Text style={styles.modalText}>
-              เว็บไซต์นี้อาจเป็นอันตรายหรือหลอกลวง กรุณาใช้ความระมัดระวัง
-            </Text>
+            <Text style={styles.modalTitle}>{modalMessage.title}</Text>
+            <Text style={styles.modalText}>{modalMessage.text}</Text>
             <View style={styles.modalButtonContainer}>
               <TouchableOpacity
                 style={[styles.modalButton, styles.modalCloseButton]}
@@ -136,6 +208,12 @@ const styles = StyleSheet.create({
     borderBottomColor: '#ddd',
     alignItems: 'center',
   },
+  backButton: {
+    padding: 8,
+  },
+  disabledButton: {
+    opacity: 0.5,
+  },
   input: {
     flex: 1,
     height: 40,
@@ -143,10 +221,10 @@ const styles = StyleSheet.create({
     borderColor: '#ddd',
     borderRadius: 20,
     paddingHorizontal: 15,
-    marginRight: 10,
+    marginHorizontal: 10,
     backgroundColor: '#f9f9f9',
   },
-  button: {
+  goButton: {
     backgroundColor: '#D60000',
     borderRadius: 20,
     height: 40,
@@ -158,10 +236,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 4,
     elevation: 5,
-  },
-  buttonText: {
-    color: '#fff',
-    fontWeight: 'bold',
   },
   browserContent: {
     flex: 1,
