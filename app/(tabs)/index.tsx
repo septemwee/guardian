@@ -1,13 +1,21 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Platform, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import Carousel from 'react-native-reanimated-carousel';
 
+// --- Main App Component ---
+// This component now serves as the single, static screen.
 const App = () => {
+  // Use state for statistical data to make it dynamic and ready for future updates.
+  const [stats] = useState({
+    suspiciousMessages: 5,
+    suspiciousCalls: 12,
+    suspiciousWebsites: 3,
+  });
+
   return (
     <SafeAreaView style={styles.container}>
-      {/* True Guardian Card */}
+      {/* ส่วนหัว: การ์ด True Guardian */}
       <View style={styles.guardianCardContainer}>
         <LinearGradient
           colors={['#8A0000', '#D60000']}
@@ -24,42 +32,42 @@ const App = () => {
         </LinearGradient>
       </View>
 
-      {/* Main Feature Buttons */}
-      <View style={styles.mainButtonsContainer}>
-        <View style={styles.buttonRow}>
-          <TouchableOpacity style={styles.featureButton}>
-            <Ionicons name="chatbox-ellipses-outline" size={40} color="#D60000" />
-            <Text style={styles.buttonText}>Chat</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.featureButton}>
-            <Ionicons name="globe-outline" size={40} color="#D60000" />
-            <Text style={styles.buttonText}>Browser</Text>
-          </TouchableOpacity>
-        </View>
-
-        <TouchableOpacity style={styles.trueMoneyButton}>
-          <View style={styles.trueMoneyContent}>
-            <MaterialCommunityIcons name="wallet-outline" size={40} color="#D60000" />
-            <Text style={styles.buttonText}>True Money</Text>
+      {/* ส่วน Dashboard แสดงสถิติ */}
+      <View style={styles.dashboardContainer}>
+        <Text style={styles.dashboardHeader}>รายงานความปลอดภัย</Text>
+        <View style={styles.statCardsRow}>
+          {/* สถิติข้อความน่าสงสัย */}
+          <View style={styles.statCard}>
+            <Ionicons name="chatbox-ellipses-outline" size={30} color="#D60000" />
+            <Text style={styles.statNumber}>{stats.suspiciousMessages}</Text>
+            <Text style={styles.statText}>ข้อความ</Text>
           </View>
-        </TouchableOpacity>
+
+          {/* สถิติสายโทรศัพท์น่าสงสัย */}
+          <View style={styles.statCard}>
+            <Ionicons name="call-outline" size={30} color="#D60000" />
+            <Text style={styles.statNumber}>{stats.suspiciousCalls}</Text>
+            <Text style={styles.statText}>สายโทรศัพท์</Text>
+          </View>
+
+          {/* สถิติเว็บน่าสงสัย */}
+          <View style={styles.statCard}>
+            <Ionicons name="globe-outline" size={30} color="#D60000" />
+            <Text style={styles.statNumber}>{stats.suspiciousWebsites}</Text>
+            <Text style={styles.statText}>เว็บ</Text>
+          </View>
+        </View>
       </View>
     </SafeAreaView>
   );
 };
 
+// --- STYLES ---
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f0f0f0',
     paddingTop: Platform.OS === 'android' ? 25 : 0,
-  },
-  header: {
-    padding: 15,
-  },
-  headerText: {
-    fontSize: 18,
-    color: '#888',
   },
   guardianCardContainer: {
     paddingHorizontal: 20,
@@ -87,20 +95,27 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     padding: 20,
   },
-  mainButtonsContainer: {
+  dashboardContainer: {
     flex: 1,
     paddingHorizontal: 20,
+    marginTop: 20,
   },
-  buttonRow: {
+  dashboardHeader: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    color: '#333',
+  },
+  statCardsRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 15,
+    marginBottom: 20,
   },
-  featureButton: {
+  statCard: {
     flex: 1,
     backgroundColor: '#fff',
     borderRadius: 20,
-    padding: 20,
+    padding: 15,
     alignItems: 'center',
     marginHorizontal: 5,
     shadowColor: '#000',
@@ -108,33 +123,35 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
-    minHeight: 120, 
-    justifyContent: 'center',
   },
-  trueMoneyButton: {
-    backgroundColor: '#fff',
-    borderRadius: 20,
-    padding: 20,
-    alignItems: 'center',
-    marginBottom: 15,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-    minHeight: 120,
-    justifyContent: 'center',
-  },
-  trueMoneyContent: {
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  buttonText: {
-    marginTop: 5,
-    fontSize: 16,
+  statNumber: {
+    fontSize: 28,
     fontWeight: 'bold',
     color: '#333',
+    marginTop: 10,
+  },
+  statText: {
+    fontSize: 14,
+    color: '#888',
+    marginTop: 5,
+  },
+  scanButton: {
+    backgroundColor: '#D60000',
+    borderRadius: 20,
+    padding: 20,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 5,
+  },
+  scanButtonText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#fff',
   },
   bottomNavContainer: {
     position: 'absolute',
@@ -158,11 +175,19 @@ const styles = StyleSheet.create({
   },
   navButton: {
     padding: 10,
+    alignItems: 'center',
   },
-  chatContent: {
-    flex: 1, // ทำให้ส่วนนี้ขยายเต็มพื้นที่ที่เหลือ
-    paddingHorizontal: 16, // เพิ่ม padding ซ้าย-ขวา เพื่อให้ดูดีขึ้น
-  }
+  navText: {
+    fontSize: 12,
+    marginTop: 4,
+    color: '#555',
+  },
+  navTextActive: {
+    fontSize: 12,
+    marginTop: 4,
+    color: '#D60000',
+    fontWeight: 'bold',
+  },
 });
 
 export default App;
