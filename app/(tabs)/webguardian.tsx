@@ -229,13 +229,13 @@ if (urlCheck.danger) {
                 style={[styles.modalButton, styles.modalCloseButton]}
                 onPress={closeModal}
               >
-                <Text style={styles.modalButtonText}>ปิด</Text>
+                <Text style={styles.modalButtonText}>เข้าชมต่อ</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.modalButton, styles.modalProceedButton]}
                 onPress={proceedToUnsafeUrl}
               >
-                <Text style={styles.modalButtonText}>เข้าชมต่อ</Text>
+                <Text style={styles.modalButtonText}>แจ้งรายงาน</Text>
               </TouchableOpacity>
             </View>
           </View>
