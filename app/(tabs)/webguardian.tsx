@@ -18,7 +18,8 @@ const BrowserMockup = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [modalMessage, setModalMessage] = useState({ title: '', text: '' });
   const [canGoBack, setCanGoBack] = useState(false);
-
+  const [initialDomain, setInitialDomain] = useState<string | null>(null);
+  const [errors, setErrors] = useState<string[]>([]);
 
   const checkUrlStructure = (url: string) => {
   try {
@@ -41,6 +42,8 @@ const BrowserMockup = () => {
 
   // ฟังก์ชันสำหรับจัดการเมื่อผู้ใช้กดปุ่ม 'Go'
   const handleGo = (inputUrl: string = url) => {
+      const newErrors: string[] = [];
+
     // ป้องกันการโหลด URL ว่าง
     if (!inputUrl.trim()) {
       setUrl('https://www.google.com');
@@ -56,52 +59,74 @@ const BrowserMockup = () => {
       formattedUrl = `https://${inputUrl}`;
     }
     
-    const isSuspiciousWebsite = suspiciousWebsites.some(suspiciousUrl => formattedUrl.includes(suspiciousUrl));
-    const isHttp = formattedUrl.startsWith('http://') && !formattedUrl.startsWith('https://');
+  
     
+     // ตรวจโครงสร้างโดเมน
   const urlCheck = checkUrlStructure(formattedUrl);
-if (urlCheck.danger) {
-  let errorText = 'เว็บไซต์นี้มีความผิดปกติที่อาจเสี่ยงต่อความปลอดภัย';
-
-  switch (urlCheck.reason) {
-    case 'subdomain suspicious':
-      errorText = `ชื่อเว็บไซต์มีส่วนย่อย (subdomain) ที่แปลก เช่น มีตัวเลขหรือสัญลักษณ์ที่ไม่น่าเชื่อถือ ซึ่งอาจเป็นสัญญาณของเว็บปลอม โปรดระวัง`;
-      break;
-    case 'punycode (homograph) detected':
-      errorText = `ชื่อโดเมนใช้รหัสพิเศษ (punycode) ที่อาจถูกใช้หลอกลวงโดยการเลียนแบบชื่อเว็บจริง (homograph attack) โปรดตรวจสอบให้แน่ใจก่อนใช้งาน`;
-      break;
-    case 'invalid url':
-      errorText = `ลิงก์ที่ป้อนไม่ถูกต้อง โปรดตรวจสอบ URL อีกครั้ง`;
-      break;
+  if (urlCheck.danger) {
+    switch (urlCheck.reason) {
+      case 'subdomain suspicious':
+        newErrors.push(`ชื่อเว็บไซต์มีส่วนย่อย (subdomain) ที่แปลก`);
+        break;
+      case 'punycode (homograph) detected':
+        newErrors.push(`ชื่อโดเมนใช้รหัสพิเศษ (punycode) ที่อาจถูกใช้หลอกลวง`);
+        break;
+      case 'invalid url':
+        newErrors.push(`ลิงก์ไม่ถูกต้อง`);
+        break;
+    }
   }
 
-  setModalMessage({
-    title: '⚠️ เว็บไซต์น่าสงสัย',
-    text: errorText,
-  });
-  setIsModalVisible(true);
-  return;
-}
+  // ตรวจ HTTP
+  if (formattedUrl.startsWith('http://') && !formattedUrl.startsWith('https://')) {
+    newErrors.push(`เว็บไซต์นี้ใช้การเชื่อมต่อแบบ HTTP ซึ่งไม่ปลอดภัย`);
+  }
 
+  // ตรวจจาก blacklist
+  const isSuspiciousWebsite = suspiciousWebsites.some(suspiciousUrl => formattedUrl.includes(suspiciousUrl));
+  if (isSuspiciousWebsite) {
+    newErrors.push(`เว็บไซต์นี้อยู่ในรายการต้องสงสัย อาจเป็นอันตรายหรือหลอกลวง`);
+  }
 
-    if (isHttp) {
-      setModalMessage({
-        title: '⚠️ การเชื่อมต่อไม่ปลอดภัย',
-        text: 'เว็บไซต์นี้ใช้การเชื่อมต่อแบบ HTTP ซึ่งอาจไม่ปลอดภัย กรุณาใช้ความระมัดระวัง',
-      });
-      setIsModalVisible(true);
-    } else if (isSuspiciousWebsite) {
-      setModalMessage({
-        title: '⚠️ เว็บไซต์น่าสงสัย',
-        text: 'เว็บไซต์นี้อาจเป็นอันตรายหรือหลอกลวง กรุณาใช้ความระมัดระวัง',
-      });
-      setIsModalVisible(true);
-    } else {
-      setWebViewSource({ uri: formattedUrl });
+   if (newErrors.length > 0) {
+    setModalMessage({
+      title: '⚠️ ตรวจพบความเสี่ยง',
+      text: newErrors.join('\n\n'),
+    });
+    setIsModalVisible(true);
+    return;
+  }
+
+  // เก็บ domain แรกเพื่อใช้ตรวจ redirect
+  try {
+    setInitialDomain(new URL(formattedUrl).hostname);
+  } catch (e) {
+    console.log("Invalid initial URL");
+  }
+
+  setErrors([]); // reset error เดิม
+  setWebViewSource({ uri: formattedUrl });
+};
+
+// ตรวจ redirect หลังเริ่มโหลด
+const handleNavChange = (navState: any) => {
+  try {
+    const currentDomain = new URL(navState.url).hostname;
+    if (initialDomain && currentDomain !== initialDomain) {
+      const redirectError = `พบการ redirect ข้ามโดเมน: ${initialDomain} → ${currentDomain}`;
+      if (!errors.includes(redirectError)) {
+        setErrors(prev => [...prev, redirectError]);
+        setModalMessage({
+          title: '⚠️ ตรวจพบการ redirect',
+          text: redirectError,
+        });
+        setIsModalVisible(true);
+      }
     }
-  };
-
-
+  } catch (e) {
+    console.log("Invalid URL in navigation");
+  }
+};3
 
   const closeModal = () => {
     setIsModalVisible(false);
