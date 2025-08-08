@@ -21,7 +21,9 @@ const BrowserMockup = () => {
 
   // ฟังก์ชันสำหรับจัดการเมื่อผู้ใช้กดปุ่ม 'Go'
   const handleGo = (inputUrl: string = url) => {
+    // ป้องกันการโหลด URL ว่าง
     if (!inputUrl.trim()) {
+      setUrl('https://www.google.com');
       setWebViewSource({ uri: 'https://www.google.com' });
       return;
     }
@@ -67,6 +69,7 @@ const BrowserMockup = () => {
   };
 
   const handleNavigationStateChange = (navState: WebViewNavigation) => {
+    // อัปเดต URL ใน input field ให้ตรงกับหน้าเว็บที่แสดงอยู่
     setUrl(navState.url);
     setCanGoBack(navState.canGoBack);
     console.log('Current URL:', navState.url);
@@ -77,6 +80,7 @@ const BrowserMockup = () => {
       webViewRef.current.goBack();
     } else {
       setWebViewSource({ uri: 'https://www.google.com' });
+      setUrl('https://www.google.com');
     }
   };
 
@@ -117,8 +121,8 @@ const BrowserMockup = () => {
         <TextInput
           style={styles.input}
           placeholder="Enter URL..."
-          onChangeText={text => setUrl(text)}
-          value={url}
+          onChangeText={text => setUrl(text)} // เชื่อมต่อกับ state อย่างถูกต้อง
+          value={url} // แสดงค่าจาก state
           autoCapitalize="none"
           onSubmitEditing={() => handleGo()}
         />
